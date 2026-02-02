@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄金三小时学习计划</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .date-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .date-btn {
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #2196F3;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .date-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+            background: #2196F3;
+            color: white;
+        }
+        
+        #current-date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            min-width: 200px;
+            text-align: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        @media (min-width: 992px) {
+            .main-content {
+                flex-direction: row;
+            }
+            
+            .form-section, .schedule-section {
+                flex: 1;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #1976D2;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e3f2fd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #2196F3;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eaeaea;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #2196F3;
+            outline: none;
+        }
+        
+        .time-inputs {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .time-inputs > div {
+            flex: 1;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(to right, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-add {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            margin-right: 8px;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .btn-clear {
+            background: linear-gradient(to right, #8e9eab, #eef2f3);
+            color: #333;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .time-slots {
+            margin-top: 20px;
+        }
+        
+        .time-slot {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 5px solid #2196F3;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .time-slot:hover {
+            transform: translateX(5px);
+            background: #f0f7ff;
+        }
+        
+        .time-range {
+            font-weight: 600;
+            color: #2196F3;
+            min-width: 120px;
+            font-size: 1.1rem;
+        }
+        
+        .task-content {
+            flex: 1;
+            padding: 0 15px;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .task-description {
+            color: #666;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .no-plans {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+            font-style: italic;
+        }
+        
+        .time-visualization {
+            margin-top: 30px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 70px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 45px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #eaeaea;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+        
+        .timeline-time {
+            position: absolute;
+            left: -70px;
+            top: 0;
+            width: 60px;
+            text-align: right;
+            font-weight: 600;
+            color: #2196F3;
+            font-size: 0.95rem;
+        }
+        
+        .timeline-block {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #2196F3;
+            margin-left: 10px;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2196F3;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .data-management {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .data-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .btn-backup {
+            background: linear-gradient(to right, #2196F3, #1976D2);
+            color: white;
+        }
+        
+        .btn-import {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        .file-input-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-input-label:hover {
+            border-color: #2196F3;
+            background: rgba(33, 150, 243, 0.05);
+        }
+        
+        .data-preview {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .time-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .time-option-btn {
+            padding: 10px 15px;
+            background: #e3f2fd;
+            border: 2px solid #bbdefb;
+            border-radius: 6px;
+            color: #1976D2;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .time-option-btn:hover {
+            background: #bbdefb;
+        }
+        
+        .time-option-btn.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+        
+        .time-select-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .time-select {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #eaeaea;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .time-select:focus {
+            border-color: #2196F3;
+            outline: none;
+        }
+        
+        .time-separator {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .reflection-modal textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        @media (max-width: 768px) {
+            .time-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .time-slot {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .time-range {
+                margin-bottom: 10px;
+            }
+            
+            .task-content {
+                padding: 0;
+                margin-bottom: 15px;
+            }
+            
+            .task-actions {
+                align-self: flex-end;
+            }
+            
+            .timeline {
+                padding-left: 60px;
+            }
+            
+            .timeline-time {
+                left: -60px;
+                width: 50px;
+                font-size: 0.9rem;
+            }
+            
+            .timeline::before {
+                left: 40px;
+            }
+            
+            .data-options {
+                flex-direction: column;
+            }
+            
+            .data-options .btn {
+                width: 100%;
+            }
+            
+            .time-select-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .time-separator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-clock"></i> 黄金三小时学习计划</h1>
+            <p class="subtitle">专注于晚上20:00-23:00的高效学习时段，充分利用黄金三小时</p>
+        </header>
+        
+        <div class="date-selector">
+            <button class="date-btn" id="prev-day"><i class="fas fa-chevron-left"></i></button>
+            <div id="current-date">2023年10月27日 星期五</div>
+            <button class="date-btn" id="next-day"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        
+        <div class="main-content">
+            <div class="form-section">
+                <div class="card">
+                    <h2 class="section-title"><i class="fas fa-plus-circle"></i> 添加新计划</h2>
+                    <form id="plan-form">
+                        <div class="form-group">
+                            <label for="task-title">计划标题</label>
+                            <input type="text" id="task-title" placeholder="例如：学习HTML5 Canvas" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="task-description">计划描述（可选）</label>
+                            <textarea id="task-description" rows="3" placeholder="详细描述计划内容...（支持换行）"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>时间安排 (20:00-23:00)</label>
+                            <div class="time-inputs">
+                                <div>
+                                    <label for="start-hour">开始时间</label>
+                                    <div class="time-select-container">
+                                        <select id="start-hour" class="time-select">
+                                            <option value="20">20</option>
+                                            <option value="21">21</option>
+                                            <option value="22">22</option>
+                                            <option value="23">23</option>
+                                        </select>
+                                        <span class="time-separator">:</span>
+                                        <select id="start-minute" class="time-select">
+                                            <option value="00">00</option>
+                                            <option value="30">30</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="end-hour">结束时间</label>
+                                    <div class="time-select-container">
+                                        <select id="end-hour" class="time-select">
+                                            <option value="20">20</option>
+                                            <option value="21">21</option>
+                                            <option value="22">22</option>
+                                            <option value="23">23</option>
+                                        </select>
+                                        <span class="time-separator">:</span>
+                                        <select id="end-minute" class="time-select">
+                                            <option value="00">00</option>
+                                            <option value="30">30</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="time-options">
+                                <button type="button" class="time-option-btn" data-start-hour="20" data-start-minute="00" data-end-hour="21" data-end-minute="00">20:00-21:00</button>
+                                <button type="button" class="time-option-btn" data-start-hour="21" data-start-minute="00" data-end-hour="22" data-end-minute="00">21:00-22:00</button>
+                                <button type="button" class="time-option-btn" data-start-hour="22" data-start-minute="00" data-end-hour="23" data-end-minute="00">22:00-23:00</button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-add"><i class="fas fa-plus"></i> 添加到计划</button>
+                        <button type="button" class="btn btn-clear" id="clear-form"><i class="fas fa-eraser"></i> 清空表单</button>
+                    </form>
+                    
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-plans">0</div>
+                            <div class="stat-label">今日计划</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-hours">0</div>
+                            <div class="stat-label">总小时数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="completed-plans">0</div>
+                            <div class="stat-label">已完成</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 数据管理区域 -->
+                <div class="data-management">
+                    <h2 class="section-title"><i class="fas fa-database"></i> 数据管理</h2>
+                    <div class="data-options">
+                        <button class="btn btn-backup" id="backup-btn">
+                            <i class="fas fa-file-export"></i> 备份数据
+                        </button>
+                        <button class="btn btn-import" id="import-btn">
+                            <i class="fas fa-upload"></i> 导入数据
+                        </button>
+                    </div>
+                    
+                    <div class="file-input-container">
+                        <label class="file-input-label">
+                            <i class="fas fa-file-import"></i> 选择JSON文件导入
+                            <input type="file" id="file-input" class="file-input" accept=".json">
+                        </label>
+                        <div id="file-name" style="text-align: center; margin-top: 5px; color: #666; font-size: 0.9rem;"></div>
+                    </div>
+                    
+                    <div id="data-preview-container" style="display: none;">
+                        <h3 style="margin-bottom: 10px; color: #2c3e50;">数据预览</h3>
+                        <div class="data-preview" id="data-preview"></div>
+                        <button class="btn btn-add" id="confirm-import-file" style="margin-top: 15px;">
+                            <i class="fas fa-check"></i> 确认导入文件数据
+                        </button>
+                    </div>
+                    
+                    <p style="margin-top: 20px; color: #666; font-size: 0.9rem; line-height: 1.5;">
+                        <strong>数据说明：</strong>
+                        <br>• 数据存储在浏览器本地存储中，清除浏览器数据会丢失计划
+                        <br>• 定期使用"备份数据"功能将数据保存到您的设备
+                        <br>• 导入数据会覆盖当前所有数据，请谨慎操作
+                    </p>
+                </div>
+            </div>
+            
+            <div class="schedule-section">
+                <div class="card">
+                    <h2 class="section-title"><i class="fas fa-tasks"></i> 今日计划列表</h2>
+                    <div id="plans-container">
+                        <!-- 计划项将通过JS动态添加 -->
+                        <div class="no-plans">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>今天还没有任何计划，添加您的第一个计划吧！</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card time-visualization">
+                    <h2 class="section-title"><i class="fas fa-chart-bar"></i> 黄金三小时时间轴</h2>
+                    <div id="timeline-container">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-line"></i>
+                            <p>添加计划后，您将在这里看到时间轴可视化图表</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>黄金三小时学习计划 &copy; 2023 | 使用HTML5本地存储技术保存您的数据</p>
+            <p>提示：请定期使用"备份数据"功能保存您的重要计划数据</p>
+        </footer>
+    </div>
+
+    <!-- 导入数据模态框 -->
+    <div class="modal" id="import-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">导入数据</h3>
+                <button class="close-modal" id="close-import-modal">&times;</button>
+            </div>
+            <div id="import-alert" style="display: none;"></div>
+            <div class="form-group">
+                <label>粘贴导出的JSON数据</label>
+                <textarea id="import-data" class="form-control" rows="10" placeholder="粘贴之前导出的JSON数据..."></textarea>
+            </div>
+            <div class="data-options">
+                <button class="btn btn-add" id="confirm-import">
+                    <i class="fas fa-check"></i> 确认导入（覆盖）
+                </button>
+            </div>
+            <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+                <strong>注意：</strong> 
+                <br>• 导入数据会完全覆盖当前所有数据
+                <br>• 导入时会自动兼容旧版本数据（包含优先级字段）
+            </p>
+        </div>
+    </div>
+
+    <!-- 完成计划感想模态框 -->
+    <div class="modal reflection-modal" id="reflection-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">完成计划感想</h3>
+                <button class="close-modal" id="close-reflection-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>请简要记录完成计划的感想或收获（可选）</label>
+                <textarea id="reflection-text" rows="5" placeholder="例如：今天学习很有收获，掌握了新的知识点..."></textarea>
+            </div>
+            <button class="btn btn-add" id="save-reflection">
+                <i class="fas fa-check"></i> 保存感想并完成计划
+            </button>
+            <button class="btn btn-clear" id="skip-reflection" style="margin-top: 10px;">
+                <i class="fas fa-forward"></i> 跳过，直接完成计划
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 当前选中的日期
+        let currentDate = new Date();
+        // 编辑状态标识和当前编辑的计划ID
+        let isEditing = false;
+        let currentEditId = null;
+        // 临时存储导入的文件数据
+        let tempImportedData = null;
+        // 当前正在标记完成的计划ID和日期
+        let pendingCompletePlanId = null;
+        let pendingCompletePlanDate = null;
+        
+        // DOM元素
+        const currentDateElement = document.getElementById('current-date');
+        const planForm = document.getElementById('plan-form');
+        const plansContainer = document.getElementById('plans-container');
+        const timelineContainer = document.getElementById('timeline-container');
+        const prevDayBtn = document.getElementById('prev-day');
+        const nextDayBtn = document.getElementById('next-day');
+        const clearFormBtn = document.getElementById('clear-form');
+        const totalPlansElement = document.getElementById('total-plans');
+        const totalHoursElement = document.getElementById('total-hours');
+        const completedPlansElement = document.getElementById('completed-plans');
+        
+        // 初始化应用
+        function initializeApp() {
+            // 设置今天为默认日期
+            updateDateDisplay();
+            
+            // 加载当前日期的计划
+            loadPlansForDate();
+            
+            // 绑定事件监听器
+            bindEvents();
+            
+            // 显示欢迎消息
+            showAlert('黄金三小时学习计划已启动！', 'success');
+            
+            // 检查是否需要初始化示例数据
+            const todayKey = currentDate.toISOString().split('T')[0];
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+
+        }
+        
+        // 显示提示信息
+        function showAlert(message, type = 'info') {
+            // 移除现有的提示
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) existingAlert.remove();
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            
+            // 添加到页面顶部
+            const container = document.querySelector('.container');
+            const header = document.querySelector('header');
+            container.insertBefore(alertDiv, header.nextSibling);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.style.opacity = '0';
+                    alertDiv.style.transition = 'opacity 0.5s';
+                    setTimeout(() => alertDiv.remove(), 500);
+                }
+            }, 3000);
+        }
+        
+        // 绑定事件监听器
+        function bindEvents() {
+            // 日期切换按钮
+            prevDayBtn.addEventListener('click', () => changeDate(-1));
+            nextDayBtn.addEventListener('click', () => changeDate(1));
+            
+            // 表单相关按钮
+            clearFormBtn.addEventListener('click', clearForm);
+            
+            // 导入导出相关按钮
+            document.getElementById('import-btn').addEventListener('click', () => {
+                document.getElementById('import-modal').style.display = 'flex';
+            });
+            document.getElementById('backup-btn').addEventListener('click', backupData);
+            
+            // 关闭导入模态框
+            document.getElementById('close-import-modal').addEventListener('click', () => {
+                document.getElementById('import-modal').style.display = 'none';
+            });
+            
+            // 确认导入数据
+            document.getElementById('confirm-import').addEventListener('click', () => importData('replace'));
+            
+            // 文件导入
+            document.getElementById('file-input').addEventListener('change', handleFileSelect);
+            
+            // 确认导入文件数据
+            document.getElementById('confirm-import-file').addEventListener('click', confirmFileImport);
+            
+            // 点击模态框外部关闭
+            document.getElementById('import-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // 感想模态框相关
+            document.getElementById('close-reflection-modal').addEventListener('click', () => {
+                document.getElementById('reflection-modal').style.display = 'none';
+            });
+            
+            document.getElementById('save-reflection').addEventListener('click', saveReflection);
+            
+            document.getElementById('skip-reflection').addEventListener('click', () => {
+                togglePlanComplete(pendingCompletePlanId, pendingCompletePlanDate, '');
+                document.getElementById('reflection-modal').style.display = 'none';
+            });
+            
+            document.getElementById('reflection-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // 时间选择器联动
+            const startHourSelect = document.getElementById('start-hour');
+            const startMinuteSelect = document.getElementById('start-minute');
+            const endHourSelect = document.getElementById('end-hour');
+            const endMinuteSelect = document.getElementById('end-minute');
+            
+            // 开始时间变化时，调整结束时间
+            startHourSelect.addEventListener('change', function() {
+                const startHour = parseInt(this.value);
+                const endHour = parseInt(endHourSelect.value);
+                const startMinute = parseInt(startMinuteSelect.value);
+                const endMinute = parseInt(endMinuteSelect.value);
+                
+                // 如果开始时间大于等于结束时间，调整结束时间
+                if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
+                    endHourSelect.value = startHour;
+                    endMinuteSelect.value = startMinute === 0 ? '30' : '00';
+                    
+                    // 如果分钟是00，则改为30，否则小时加1，分钟改为00
+                    if (endMinuteSelect.value === '00') {
+                        // 已经是00，不需要调整
+                    } else {
+                        // 如果开始时间是30分，结束时间应该是下一个整点
+                        if (startHour < 23) {
+                            endHourSelect.value = startHour + 1;
+                            endMinuteSelect.value = '00';
+                        } else {
+                            // 如果已经是23点，结束时间只能是23:30
+                            endMinuteSelect.value = '30';
+                        }
+                    }
+                }
+            });
+            
+            startMinuteSelect.addEventListener('change', function() {
+                const startHour = parseInt(startHourSelect.value);
+                const endHour = parseInt(endHourSelect.value);
+                const startMinute = parseInt(this.value);
+                const endMinute = parseInt(endMinuteSelect.value);
+                
+                // 如果开始时间大于等于结束时间，调整结束时间
+                if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
+                    // 如果开始分钟是00，结束分钟设为30
+                    if (startMinute === 0) {
+                        endMinuteSelect.value = '30';
+                    } else {
+                        // 如果开始分钟是30，结束时间设为下一个整点
+                        if (startHour < 23) {
+                            endHourSelect.value = startHour + 1;
+                            endMinuteSelect.value = '00';
+                        } else {
+                            // 如果已经是23点，结束时间只能是23:30
+                            endMinuteSelect.value = '30';
+                        }
+                    }
+                }
+            });
+            
+            // 结束时间变化时，验证合理性
+            endHourSelect.addEventListener('change', function() {
+                const startHour = parseInt(startHourSelect.value);
+                const endHour = parseInt(this.value);
+                const startMinute = parseInt(startMinuteSelect.value);
+                const endMinute = parseInt(endMinuteSelect.value);
+                
+                // 验证结束时间是否晚于开始时间
+                if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
+                    showAlert('结束时间必须晚于开始时间！', 'error');
+                    
+                    // 自动调整结束时间
+                    if (startMinute === 0) {
+                        endMinuteSelect.value = '30';
+                    } else {
+                        if (startHour < 23) {
+                            endHourSelect.value = startHour + 1;
+                            endMinuteSelect.value = '00';
+                        } else {
+                            endMinuteSelect.value = '30';
+                        }
+                    }
+                }
+            });
+            
+            endMinuteSelect.addEventListener('change', function() {
+                const startHour = parseInt(startHourSelect.value);
+                const endHour = parseInt(endHourSelect.value);
+                const startMinute = parseInt(startMinuteSelect.value);
+                const endMinute = parseInt(this.value);
+                
+                // 验证结束时间是否晚于开始时间
+                if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
+                    showAlert('结束时间必须晚于开始时间！', 'error');
+                    
+                    // 自动调整结束时间
+                    if (startMinute === 0) {
+                        this.value = '30';
+                    } else {
+                        if (startHour < 23) {
+                            endHourSelect.value = startHour + 1;
+                            this.value = '00';
+                        } else {
+                            this.value = '30';
+                        }
+                    }
+                }
+            });
+            
+            // 快速时间选择按钮
+            const timeOptionBtns = document.querySelectorAll('.time-option-btn');
+            timeOptionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    timeOptionBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // 为当前按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 设置开始时间和结束时间
+                    const startHour = this.dataset.startHour;
+                    const startMinute = this.dataset.startMinute;
+                    const endHour = this.dataset.endHour;
+                    const endMinute = this.dataset.endMinute;
+                    
+                    startHourSelect.value = startHour;
+                    startMinuteSelect.value = startMinute;
+                    endHourSelect.value = endHour;
+                    endMinuteSelect.value = endMinute;
+                });
+            });
+            
+            // 表单提交
+            planForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('task-title').value.trim();
+                const description = document.getElementById('task-description').value;
+                const startHour = document.getElementById('start-hour').value;
+                const startMinute = document.getElementById('start-minute').value;
+                const endHour = document.getElementById('end-hour').value;
+                const endMinute = document.getElementById('end-minute').value;
+                
+                if (!title) {
+                    showAlert('请填写计划标题！', 'error');
+                    return;
+                }
+                
+                const startTime = `${startHour}:${startMinute}`;
+                const endTime = `${endHour}:${endMinute}`;
+                
+                // 验证时间合理性
+                const startTotalMinutes = parseInt(startHour) * 60 + parseInt(startMinute);
+                const endTotalMinutes = parseInt(endHour) * 60 + parseInt(endMinute);
+                
+                if (endTotalMinutes <= startTotalMinutes) {
+                    showAlert('结束时间必须晚于开始时间！', 'error');
+                    return;
+                }
+                
+                // 验证时间是否在20:00-23:00范围内
+                if (startTotalMinutes < 20 * 60 || endTotalMinutes > 23 * 60) {
+                    showAlert('计划时间必须在20:00-23:00之间！', 'error');
+                    return;
+                }
+                
+                const plan = {
+                    id: isEditing ? currentEditId : Date.now(),
+                    title,
+                    description,
+                    startTime,
+                    endTime,
+                    completed: false,
+                    reflection: '',
+                    date: currentDate.toISOString().split('T')[0] // YYYY-MM-DD格式
+                };
+                
+                if (isEditing) {
+                    updatePlan(plan);
+                    showAlert('计划更新成功！', 'success');
+                } else {
+                    savePlan(plan);
+                    showAlert('计划添加成功！', 'success');
+                }
+                
+                clearForm();
+                loadPlansForDate();
+            });
+        }
+        
+        // 更改日期
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            updateDateDisplay();
+            loadPlansForDate();
+        }
+        
+        // 更新日期显示
+        function updateDateDisplay() {
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            };
+            currentDateElement.textContent = currentDate.toLocaleDateString('zh-CN', options);
+        }
+        
+        // 清空表单
+        function clearForm() {
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-description').value = '';
+            document.getElementById('start-hour').value = '20';
+            document.getElementById('start-minute').value = '00';
+            document.getElementById('end-hour').value = '20';
+            document.getElementById('end-minute').value = '30';
+            
+            // 移除快速时间选择按钮的active类
+            document.querySelectorAll('.time-option-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 重置编辑状态
+            isEditing = false;
+            currentEditId = null;
+            planForm.querySelector('.btn-add').innerHTML = '<i class="fas fa-plus"></i> 添加到计划';
+        }
+        
+        // 加载指定日期的计划
+        function loadPlansForDate() {
+            const dateKey = currentDate.toISOString().split('T')[0];
+            const plans = getPlansByDate(dateKey);
+            
+            displayPlans(plans);
+            displayTimeline(plans);
+            updateStats(plans);
+        }
+        
+        // 获取指定日期的计划
+        function getPlansByDate(date) {
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            return allPlans[date] || [];
+        }
+        
+        // 保存计划
+        function savePlan(plan) {
+            const dateKey = plan.date;
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+            if (!allPlans[dateKey]) {
+                allPlans[dateKey] = [];
+            }
+            
+            allPlans[dateKey].push(plan);
+            
+            // 按开始时间排序
+            allPlans[dateKey].sort((a, b) => a.startTime.localeCompare(b.startTime));
+            
+            localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+        }
+        
+        // 更新计划
+        function updatePlan(updatedPlan) {
+            const dateKey = updatedPlan.date;
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+            if (allPlans[dateKey]) {
+                const index = allPlans[dateKey].findIndex(p => p.id === updatedPlan.id);
+                if (index !== -1) {
+                    allPlans[dateKey][index] = updatedPlan;
+                    // 重新排序
+                    allPlans[dateKey].sort((a, b) => a.startTime.localeCompare(b.startTime));
+                    localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                }
+            }
+        }
+        
+        // 删除计划
+        function deletePlan(planId, date) {
+            if (confirm('确定要删除这个计划吗？')) {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                
+                if (allPlans[date]) {
+                    allPlans[date] = allPlans[date].filter(p => p.id !== planId);
+                    localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                    loadPlansForDate();
+                    showAlert('计划已删除！', 'success');
+                }
+            }
+        }
+        
+        // 切换计划完成状态
+        function togglePlanComplete(planId, date, reflection = '') {
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+            if (allPlans[date]) {
+                const plan = allPlans[date].find(p => p.id === planId);
+                if (plan) {
+                    plan.completed = !plan.completed;
+                    if (reflection && plan.completed) {
+                        plan.reflection = reflection;
+                    }
+                    localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                    loadPlansForDate();
+                    
+                    const status = plan.completed ? '已完成' : '未完成';
+                    showAlert(`计划标记为${status}！`, 'success');
+                }
+            }
+        }
+        
+        // 显示计划列表
+        function displayPlans(plans) {
+            if (plans.length === 0) {
+                plansContainer.innerHTML = `
+                    <div class="no-plans">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>今天还没有任何计划，添加您的第一个计划吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            plansContainer.innerHTML = '';
+            
+            plans.forEach(plan => {
+                const planElement = document.createElement('div');
+                planElement.className = 'time-slot';
+                planElement.dataset.id = plan.id;
+                
+                // 计算时间差
+                const start = parseTime(plan.startTime);
+                const end = parseTime(plan.endTime);
+                const duration = (end - start) / (1000 * 60 * 60); // 小时数
+                
+                // 如果计划已完成，添加特殊样式
+                if (plan.completed) {
+                    planElement.style.opacity = '0.7';
+                    planElement.style.background = '#f0f0f0';
+                }
+                
+                planElement.innerHTML = `
+                    <div class="time-range">
+                        <div>${plan.startTime} - ${plan.endTime}</div>
+                        <div style="font-size:0.8rem; color:#666;">${duration.toFixed(1)} 小时</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-title">
+                            ${plan.title}
+                            ${plan.completed ? '<span style="color:#2196F3; font-size:0.8rem; margin-left:5px;"><i class="fas fa-check-circle"></i> 已完成</span>' : ''}
+                        </div>
+                        <div class="task-description">${plan.description || '无详细描述'}</div>
+                        ${plan.reflection ? `<div class="task-description" style="color:#00b09b; margin-top:8px; font-style:italic;"><strong>感想：</strong>${plan.reflection}</div>` : ''}
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-edit" onclick="editPlan(${plan.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-delete" onclick="deletePlan(${plan.id}, '${plan.date}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn" style="background: ${plan.completed ? '#ff416c' : '#2196F3'}; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', ${plan.completed})">
+                            <i class="fas ${plan.completed ? 'fa-redo' : 'fa-check'}"></i>
+                        </button>
+                    </div>
+                `;
+                
+                plansContainer.appendChild(planElement);
+            });
+        }
+        
+        // 完成计划（带感想）
+        function completePlan(planId, date, isAlreadyCompleted) {
+            if (isAlreadyCompleted) {
+                // 如果已经是完成状态，直接切换回未完成
+                togglePlanComplete(planId, date);
+                return;
+            }
+            
+            // 保存要完成的计划信息
+            pendingCompletePlanId = planId;
+            pendingCompletePlanDate = date;
+            
+            // 清空感想输入框
+            document.getElementById('reflection-text').value = '';
+            
+            // 显示感想模态框
+            document.getElementById('reflection-modal').style.display = 'flex';
+        }
+        
+        // 保存感想
+        function saveReflection() {
+            const reflection = document.getElementById('reflection-text').value.trim();
+            togglePlanComplete(pendingCompletePlanId, pendingCompletePlanDate, reflection);
+            document.getElementById('reflection-modal').style.display = 'none';
+        }
+        
+        // 显示时间轴 - 修复后的版本
+        function displayTimeline(plans) {
+            if (plans.length === 0) {
+                timelineContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-line"></i>
+                        <p>添加计划后，您将在这里看到时间轴可视化图表</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 生成时间轴时间点（从20:00到23:00，每半小时一个点）
+            const timePoints = [];
+            for (let hour = 20; hour <= 23; hour++) {
+                timePoints.push(`${hour.toString().padStart(2, '0')}:00`);
+                if (hour < 23) {
+                    timePoints.push(`${hour.toString().padStart(2, '0')}:30`);
+                }
+            }
+            
+            let timelineHTML = '<div class="timeline">';
+            
+            // 为每个时间点创建一个时间轴项目
+            timePoints.forEach(timePoint => {
+                // 查找在这个时间点开始或正在进行的计划
+                const relevantPlans = plans.filter(plan => {
+                    return plan.startTime <= timePoint && plan.endTime > timePoint;
+                });
+                
+                timelineHTML += `
+                    <div class="timeline-item">
+                        <div class="timeline-time">${timePoint}</div>
+                        <div class="timeline-block">
+                            ${relevantPlans.length > 0 
+                                ? relevantPlans.map(plan => 
+                                    `<div class="timeline-title">${plan.title}</div>
+                                     <div style="font-size:0.85rem; color:#666;">${plan.startTime} - ${plan.endTime}</div>`
+                                  ).join('')
+                                : '<div style="color:#aaa; font-style:italic;">暂无安排</div>'
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            
+            timelineHTML += '</div>';
+            timelineContainer.innerHTML = timelineHTML;
+        }
+        
+        // 更新统计信息
+        function updateStats(plans) {
+            totalPlansElement.textContent = plans.length;
+            
+            // 计算总小时数
+            let totalHours = 0;
+            let completedCount = 0;
+            
+            plans.forEach(plan => {
+                const start = parseTime(plan.startTime);
+                const end = parseTime(plan.endTime);
+                const duration = (end - start) / (1000 * 60 * 60); // 小时数
+                totalHours += duration;
+                
+                if (plan.completed) completedCount++;
+            });
+            
+            totalHoursElement.textContent = totalHours.toFixed(1);
+            completedPlansElement.textContent = completedCount;
+        }
+        
+        // 编辑计划
+        function editPlan(planId) {
+            const dateKey = currentDate.toISOString().split('T')[0];
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+            if (allPlans[dateKey]) {
+                const plan = allPlans[dateKey].find(p => p.id === planId);
+                if (plan) {
+                    // 解析时间
+                    const [startHour, startMinute] = plan.startTime.split(':');
+                    const [endHour, endMinute] = plan.endTime.split(':');
+                    
+                    // 填充表单
+                    document.getElementById('task-title').value = plan.title;
+                    document.getElementById('task-description').value = plan.description || '';
+                    document.getElementById('start-hour').value = startHour;
+                    document.getElementById('start-minute').value = startMinute;
+                    document.getElementById('end-hour').value = endHour;
+                    document.getElementById('end-minute').value = endMinute;
+                    
+                    // 设置对应的快速时间选择按钮
+                    document.querySelectorAll('.time-option-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.startHour === startHour && 
+                            btn.dataset.startMinute === startMinute && 
+                            btn.dataset.endHour === endHour && 
+                            btn.dataset.endMinute === endMinute) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    // 设置编辑状态
+                    isEditing = true;
+                    currentEditId = plan.id;
+                    planForm.querySelector('.btn-add').innerHTML = '<i class="fas fa-save"></i> 更新计划';
+                    
+                    // 滚动到表单
+                    document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+        
+        // 备份数据（下载为JSON文件）
+        function backupData() {
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+            if (Object.keys(allPlans).length === 0) {
+                showAlert('没有可备份的数据！', 'error');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(allPlans, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileName = `黄金三小时学习计划备份_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileName);
+            linkElement.click();
+            
+            showAlert('数据备份文件已下载！', 'success');
+        }
+        
+        // 导入数据
+        function importData(mode = 'replace') {
+            const importDataStr = document.getElementById('import-data').value.trim();
+            
+            if (!importDataStr) {
+                showAlert('请输入要导入的数据', 'error');
+                return;
+            }
+            
+            try {
+                const importedData = JSON.parse(importDataStr);
+                
+                // 验证数据格式
+                if (typeof importedData !== 'object' || importedData === null) {
+                    throw new Error('数据格式不正确，必须是对象格式');
+                }
+                
+                // 清理旧版本的优先级字段
+                const cleanedData = {};
+                Object.keys(importedData).forEach(date => {
+                    cleanedData[date] = importedData[date].map(plan => {
+                        // 删除优先级字段（如果存在）
+                        const { priority, ...cleanPlan } = plan;
+                        return cleanPlan;
+                    });
+                });
+                
+                localStorage.setItem('studyPlans', JSON.stringify(cleanedData));
+                showAlert('数据导入成功！', 'success');
+                
+                // 重新加载当前日期的计划
+                loadPlansForDate();
+                
+                // 关闭模态框
+                document.getElementById('import-modal').style.display = 'none';
+                
+                // 清空导入文本框
+                document.getElementById('import-data').value = '';
+                
+            } catch (error) {
+                showAlert(`导入失败：${error.message}`, 'error');
+            }
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // 显示文件名
+            document.getElementById('file-name').textContent = `已选择文件: ${file.name}`;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // 验证数据格式
+                    if (typeof importedData !== 'object' || importedData === null) {
+                        throw new Error('数据格式不正确，必须是对象格式');
+                    }
+                    
+                    // 清理旧版本的优先级字段
+                    const cleanedData = {};
+                    Object.keys(importedData).forEach(date => {
+                        cleanedData[date] = importedData[date].map(plan => {
+                            // 删除优先级字段（如果存在）
+                            const { priority, ...cleanPlan } = plan;
+                            return cleanPlan;
+                        });
+                    });
+                    
+                    // 显示预览
+                    const previewContainer = document.getElementById('data-preview-container');
+                    const dataPreview = document.getElementById('data-preview');
+                    
+                    // 格式化JSON显示
+                    dataPreview.textContent = JSON.stringify(cleanedData, null, 2);
+                    previewContainer.style.display = 'block';
+                    
+                    // 存储解析的数据到临时变量
+                    tempImportedData = cleanedData;
+                    
+                } catch (error) {
+                    showAlert(`文件解析失败：${error.message}`, 'error');
+                    document.getElementById('data-preview-container').style.display = 'none';
+                }
+            };
+            
+            reader.onerror = function() {
+                showAlert('文件读取失败', 'error');
+                document.getElementById('data-preview-container').style.display = 'none';
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // 确认导入文件数据
+        function confirmFileImport() {
+            if (!tempImportedData) {
+                showAlert('请先选择有效的JSON文件', 'error');
+                return;
+            }
+            
+            if (confirm('确定要导入文件中的数据吗？这会覆盖当前所有数据。')) {
+                localStorage.setItem('studyPlans', JSON.stringify(tempImportedData));
+                
+                // 重新加载当前日期的计划
+                loadPlansForDate();
+                
+                // 重置文件输入
+                document.getElementById('file-input').value = '';
+                document.getElementById('file-name').textContent = '';
+                document.getElementById('data-preview-container').style.display = 'none';
+                tempImportedData = null;
+                
+                showAlert('文件数据导入成功！', 'success');
+            }
+        }
+        
+        // 辅助函数：将时间字符串转换为Date对象（今天的时间）
+        function parseTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+        }
+        
+        // 初始化一些示例数据（第一次使用时）
+        function initializeSampleData() {
+            const todayKey = currentDate.toISOString().split('T')[0];
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            
+            // 如果没有今天的数据，添加一些示例
+            if (!allPlans[todayKey] || allPlans[todayKey].length === 0) {
+                const samplePlans = [
+                    {
+                        id: 1,
+                        title: "HTML5新特性学习",
+                        description: "1. 学习HTML5语义化标签\n2. 掌握Canvas基础绘图\n3. 了解Web存储API",
+                        startTime: "20:00",
+                        endTime: "21:00",
+                        completed: true,
+                        reflection: "今天学习了HTML5的新特性，对语义化标签有了更深的理解。",
+                        date: todayKey
+                    },
+                    {
+                        id: 2,
+                        title: "CSS3动画实践",
+                        description: "练习CSS3过渡、变换和关键帧动画\n完成一个简单的加载动画",
+                        startTime: "21:00",
+                        endTime: "21:30",
+                        completed: false,
+                        reflection: "",
+                        date: todayKey
+                    },
+                    {
+                        id: 3,
+                        title: "JavaScript ES6特性",
+                        description: "学习箭头函数、模板字符串、解构赋值等ES6新特性\n完成相关练习题目",
+                        startTime: "21:30",
+                        endTime: "22:30",
+                        completed: false,
+                        reflection: "",
+                        date: todayKey
+                    },
+                    {
+                        id: 4,
+                        title: "项目总结与复习",
+                        description: "回顾今天学习的内容\n制定明天的学习计划\n完成学习笔记整理",
+                        startTime: "22:30",
+                        endTime: "23:00",
+                        completed: false,
+                        reflection: "",
+                        date: todayKey
+                    }
+                ];
+                
+                allPlans[todayKey] = samplePlans;
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                loadPlansForDate();
+            }
+        }
+        
+        // 页面加载完成后自动初始化应用
+        window.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
