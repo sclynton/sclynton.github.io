@@ -1,0 +1,19 @@
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Icon?
+
+# Temporary files
+*.tmp
+*.temp
