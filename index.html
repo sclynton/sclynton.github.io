@@ -38,6 +38,7 @@
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            line-height: 1.3;
         }
 
         .subtitle {
@@ -264,7 +265,21 @@
 
         .task-actions {
             display: flex;
-            gap: 10px;
+            gap: 6px;
+        }
+
+        .task-btn {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+
+        .task-btn-icon {
+            padding: 6px 8px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            min-width: 32px;
+            text-align: center;
         }
 
         .no-plans {
@@ -317,6 +332,10 @@
             border-left: 4px solid #2196F3;
             margin-left: 10px;
             transition: all 0.3s;
+        }
+
+        .timeline-block[data-block-height] {
+            min-height: attr(data-block-height px);
         }
 
         .timeline-block-completed {
@@ -869,7 +888,7 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-clock"></i> 黄金三小时学习计划</h1>
+            <h1><i class="fas fa-clock"></i> 黄金三小时<br>&nbsp;学习计划</h1>
             <p class="subtitle">专注于晚上20:00-23:00的高效学习时段，充分利用黄金三小时</p>
         </header>
 
@@ -1153,6 +1172,17 @@
         const totalHoursElement = document.getElementById('total-hours');
         const completedPlansElement = document.getElementById('completed-plans');
 
+        // 显示数据管理区域并触发文件选择
+        function showDataManageSectionAndTriggerFileSelect() {
+            // 显示数据管理区域
+            document.getElementById('data-manage-section').style.display = 'block';
+            document.getElementById('add-plan-section').style.display = 'none';
+
+            // 滚动到数据管理区域
+            const section = document.getElementById('data-manage-section');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         // 初始化应用
         function initializeApp() {
             // 检测页面来源
@@ -1167,21 +1197,22 @@
             // 绑定事件监听器
             bindEvents();
 
+            // 显示欢迎消息
+            showAlert('黄金三小时学习计划已启动！', 'success');
+        }
+
+        // 页面加载完成后检查本地数据
+        function checkLocalDataAfterLoad() {
             // 检查是否有数据，如果没有则询问是否恢复
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
             if (Object.keys(allPlans).length === 0) {
                 // 延迟一点显示，让页面先渲染完成
                 setTimeout(() => {
                     if (confirm('没有找到本地数据，是否要从备份文件恢复数据？')) {
-                        // 显示导入模态框
-                        document.getElementById('import-modal').style.display = 'flex';
-                    } else {
-                        showAlert('黄金三小时学习计划已启动！', 'success');
+                        // 显示数据管理区域并触发文件选择
+                        showDataManageSectionAndTriggerFileSelect();
                     }
                 }, 500);
-            } else {
-                // 显示欢迎消息
-                showAlert('黄金三小时学习计划已启动！', 'success');
             }
         }
 
@@ -1236,7 +1267,8 @@
             document.getElementById('show-data-manage-btn').addEventListener('click', () => {
                 document.getElementById('data-manage-section').style.display = 'block';
                 document.getElementById('add-plan-section').style.display = 'none';
-                document.querySelector('.data-management-section').scrollIntoView({ behavior: 'smooth' });
+                const section = document.getElementById('data-manage-section');
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
 
             document.getElementById('close-data-manage').addEventListener('click', () => {
@@ -1627,7 +1659,7 @@
                     plan.incompleteReason = incompleteReason;
                     // 标记为未完成时清空感想
                     plan.reflection = '';
-                    
+
                     localStorage.setItem('studyPlans', JSON.stringify(allPlans));
                     loadPlansForDate();
 
@@ -1685,22 +1717,22 @@
                         ${plan.incompleteReason ? `<div class="task-description" style="color:#ff416c; margin-top:8px; font-style:italic;"><strong>未完成原因：</strong>${plan.incompleteReason}</div>` : ''}
                     </div>
                     <div class="task-actions">
-                        <button class="btn btn-edit" onclick="editPlan(${plan.id})"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-delete" onclick="deletePlan(${plan.id}, '${plan.date}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-edit task-btn-icon" onclick="editPlan(${plan.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-delete task-btn-icon" onclick="deletePlan(${plan.id}, '${plan.date}')"><i class="fas fa-trash"></i></button>
                         ${!plan.completed && !plan.incompleteReason ? `
-                        <button class="btn" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', false, false)">
+                        <button class="btn task-btn-icon" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', false, false)">
                             <i class="fas fa-check"></i>
                         </button>
-                        <button class="btn" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${plan.date}')">
+                        <button class="btn task-btn-icon" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${plan.date}')">
                             <i class="fas fa-times"></i>
                         </button>` : ''}
                         ${plan.completed ? `
-                        <button class="btn" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${plan.date}')">
-                            <i class="fas fa-redo"></i> 重新标记未完成
+                        <button class="btn task-btn-icon" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${plan.date}')">
+                            <i class="fas fa-redo"></i>
                         </button>` : ''}
                         ${!plan.completed && plan.incompleteReason ? `
-                        <button class="btn" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', false, true)">
-                            <i class="fas fa-check"></i> 标记完成
+                        <button class="btn task-btn-icon" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', false, true)">
+                            <i class="fas fa-check"></i>
                         </button>` : ''}
                     </div>
                 `;
@@ -1742,12 +1774,12 @@
         // 保存未完成原因
         function saveIncomplete() {
             const incompleteReason = document.getElementById('incomplete-reason').value.trim();
-            
+
             if (!incompleteReason) {
                 showAlert('请填写未完成原因！', 'error');
                 return;
             }
-            
+
             togglePlanIncomplete(pendingIncompletePlanId, pendingIncompletePlanDate, incompleteReason);
             document.getElementById('incomplete-modal').style.display = 'none';
         }
@@ -1801,7 +1833,7 @@
                             <div>${plan.startTime}</div>
                             <div style="font-size: 0.8rem; color: #999;">${durationHours.toFixed(1)}h</div>
                         </div>
-                        <div class="timeline-block ${completedClass}" style="min-height: ${blockHeight}px;">
+                        <div class="timeline-block ${completedClass}" data-block-height="${blockHeight}">
                             <div class="timeline-title">
                                 ${statusIcon} ${plan.title}
                             </div>
@@ -1955,6 +1987,14 @@
                 // 清空导入文本框
                 document.getElementById('import-data').value = '';
 
+                // 自动隐藏数据管理模块（如果是从数据管理区域触发的）
+                setTimeout(() => {
+                    if (document.getElementById('data-manage-section').style.display === 'block') {
+                        document.getElementById('data-manage-section').style.display = 'none';
+                        showAlert('数据已成功导入，数据管理模块已自动隐藏', 'success');
+                    }
+                }, 1500);
+
             } catch (error) {
                 showAlert(`导入失败：${error.message}`, 'error');
             }
@@ -2041,6 +2081,13 @@
                 tempImportedData = null;
 
                 showAlert('文件数据导入成功！', 'success');
+                
+                // 自动隐藏数据管理模块
+                setTimeout(() => {
+                    document.getElementById('data-manage-section').style.display = 'none';
+                    // 显示成功提示
+                    showAlert('数据已成功导入，数据管理模块已自动隐藏', 'success');
+                }, 1500);
             }
         }
 
@@ -2161,7 +2208,11 @@
         }
 
         // 页面加载完成后自动初始化应用
-        window.addEventListener('DOMContentLoaded', initializeApp);
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            // 页面完全加载后检查本地数据
+            setTimeout(checkLocalDataAfterLoad, 1000);
+        });
     </script>
 </body>
 </html>
