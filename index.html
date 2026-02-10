@@ -433,18 +433,76 @@
             text-align: center;
         }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2196F3;
-        }
+            .stat-value {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #2196F3;
+            }
 
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
-        }
+            .stat-label {
+                font-size: 0.9rem;
+                color: #666;
+            }
 
-        .data-management {
+            .mood-card {
+                background: white;
+                border-radius: 12px;
+                padding: 25px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                margin-bottom: 20px;
+            }
+
+            .mood-display {
+                margin-bottom: 15px;
+            }
+
+            .mood-row {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 10px;
+            }
+
+            .mood-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .mood-icon {
+                margin-right: 10px;
+                font-size: 1.1rem;
+                min-width: 24px;
+                text-align: center;
+            }
+
+            .mood-label {
+                font-weight: 600;
+                color: #1976D2;
+                margin-right: 8px;
+                min-width: 70px;
+            }
+
+            .mood-value {
+                color: #333;
+                flex: 1;
+            }
+
+            .mood-score-value {
+                font-weight: 600;
+                font-size: 1.1rem;
+            }
+
+            .mood-score-positive {
+                color: #2196F3;
+            }
+
+            .mood-score-negative {
+                color: #ff416c;
+            }
+
+            .mood-score-zero {
+                color: #666;
+            }
+
+            .data-management {
             background: white;
             border-radius: 12px;
             padding: 20px;
@@ -466,26 +524,29 @@
         }
 
         .action-btn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 12px 20px;
+            background: white;
+            color: #1976D2;
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 150px;
+            gap: 6px;
+            min-width: 120px;
             justify-content: center;
         }
 
         .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            background: #f5f5f5;
+            border-color: #2196F3;
+            color: #1565C0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.15);
         }
 
         .action-btn:active {
@@ -866,14 +927,17 @@
 
             /* 移动端操作按钮样式 */
             .action-buttons {
-                gap: 10px;
+                gap: 8px;
                 margin-bottom: 20px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
             }
 
             .action-btn {
-                padding: 12px 20px;
-                font-size: 0.9rem;
-                min-width: 130px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+                min-width: 100px;
+                flex-shrink: 0;
             }
 
             /* 移动端统计卡片 */
@@ -970,10 +1034,13 @@
         <!-- 操作按钮区 -->
         <div class="action-buttons">
             <button class="action-btn" id="show-add-plan-btn">
-                <i class="fas fa-plus-circle"></i> 添加新计划
+                <i class="fas fa-plus-circle"></i> 新计划
             </button>
             <button class="action-btn" id="show-data-manage-btn">
                 <i class="fas fa-database"></i> 数据管理
+            </button>
+            <button class="action-btn" id="show-mood-btn">
+                <i class="fas fa-heart"></i> 今日随笔
             </button>
         </div>
 
@@ -994,6 +1061,51 @@
                     <div class="stat-label">已完成</div>
                 </div>
             </div>
+        </div>
+
+        <!-- 今日随笔记录（始终显示） -->
+        <div class="mood-display" id="mood-display">
+            <div class="card mood-card">
+                <h2 class="section-title"><i class="fas fa-heart"></i> 今日随笔</h2>
+                <div class="mood-row">
+                    <span class="mood-icon"><i class="fas fa-smile"></i></span>
+                    <span class="mood-label">心情指数</span>
+                    <span class="mood-value mood-score-value" id="mood-score-display">未记录</span>
+                </div>
+                <div class="mood-row">
+                    <span class="mood-icon"><i class="fas fa-lightbulb"></i></span>
+                    <span class="mood-label">心迹</span>
+                    <span class="mood-value" id="mood-thought-display">未记录</span>
+                </div>
+                <div class="mood-row">
+                    <span class="mood-icon"><i class="fas fa-moon"></i></span>
+                    <span class="mood-label">梦境</span>
+                    <span class="mood-value" id="mood-dream-display">未记录</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 心迹心情梦境记录 -->
+        <div class="card mood-card" id="mood-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-heart"></i> 今日随笔</h2>
+                <button class="close-section-btn" id="close-mood"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="mood-form">
+                <div class="form-group">
+                    <label for="mood-score">心情指数 <span style="font-weight: normal; color: #888;">(负数代表心情不好)</span></label>
+                    <input type="number" id="mood-score" placeholder="例如：5" min="-10" max="10">
+                </div>
+                <div class="form-group">
+                    <label for="mood-thought">心迹 - 当日想法</label>
+                    <textarea id="mood-thought" rows="3" placeholder="记录今天的想法和感悟..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="mood-dream">梦境 - 今日梦境</label>
+                    <textarea id="mood-dream" rows="2" placeholder="记录今天做的梦..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-add"><i class="fas fa-save"></i> 保存随笔</button>
+            </form>
         </div>
 
         <div class="main-content">
@@ -1210,6 +1322,7 @@
                 <strong>注意：</strong>
                 <br>• 未完成原因为必填项
                 <br>• 标记为未完成后，您可以随时重新标记为完成
+                <br>• <span style="color: #e74c3c; font-weight: bold;">标记未完成会自动将当前及后续计划延期到明天</span>
             </p>
         </div>
     </div>
@@ -1263,6 +1376,9 @@
             // 加载当前日期的计划
             loadPlansForDate();
 
+            // 加载当日随笔数据
+            loadMoodData();
+
             // 绑定事件监听器
             bindEvents();
 
@@ -1274,14 +1390,38 @@
         function checkLocalDataAfterLoad() {
             // 检查是否有数据，如果没有则询问是否恢复
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
-            if (Object.keys(allPlans).length === 0) {
+
+            console.log('检查本地数据...', allPlans);
+
+            // 检查是否有任何计划数据（兼容新旧格式）
+            let hasPlans = false;
+            for (const date in allPlans) {
+                if (Array.isArray(allPlans[date])) {
+                    // 旧格式：直接是数组
+                    if (allPlans[date].length > 0) {
+                        hasPlans = true;
+                        console.log('找到旧格式数据，日期:', date, '计划数:', allPlans[date].length);
+                        break;
+                    }
+                } else if (allPlans[date].plans && allPlans[date].plans.length > 0) {
+                    // 新格式：检查plans数组
+                    hasPlans = true;
+                    console.log('找到新格式数据，日期:', date, '计划数:', allPlans[date].plans.length);
+                    break;
+                }
+            }
+
+            console.log('是否有数据:', hasPlans);
+
+            if (!hasPlans) {
                 // 延迟一点显示，让页面先渲染完成
                 setTimeout(() => {
+                    console.log('显示确认对话框...');
                     if (confirm('没有找到本地数据，是否要从备份文件恢复数据？')) {
                         // 显示数据管理区域并触发文件选择
                         showDataManageSectionAndTriggerFileSelect();
                     }
-                }, 500);
+                }, 1000); // 增加延迟时间，确保欢迎消息显示完
             }
         }
 
@@ -1301,7 +1441,12 @@
             // 添加到页面顶部
             const container = document.querySelector('.container');
             const header = document.querySelector('header');
-            container.insertBefore(alertDiv, header.nextSibling);
+
+            if (container && header) {
+                // 获取header的下一个兄弟元素，如果没有则使用null（插入到父容器末尾）
+                const nextSibling = header.nextSibling;
+                container.insertBefore(alertDiv, nextSibling);
+            }
 
             // 3秒后自动移除
             setTimeout(() => {
@@ -1342,6 +1487,19 @@
 
             document.getElementById('close-data-manage').addEventListener('click', () => {
                 document.getElementById('data-manage-section').style.display = 'none';
+            });
+
+            // 显示/隐藏 今日随笔区域
+            document.getElementById('show-mood-btn').addEventListener('click', () => {
+                document.getElementById('mood-section').style.display = 'block';
+                document.getElementById('add-plan-section').style.display = 'none';
+                document.getElementById('data-manage-section').style.display = 'none';
+                const section = document.getElementById('mood-section');
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            document.getElementById('close-mood').addEventListener('click', () => {
+                document.getElementById('mood-section').style.display = 'none';
             });
 
             // 导入导出相关按钮
@@ -1592,6 +1750,42 @@
                 clearForm();
                 loadPlansForDate();
             });
+
+            // 随笔表单提交
+            document.getElementById('mood-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const moodScore = document.getElementById('mood-score').value.trim();
+                const moodThought = document.getElementById('mood-thought').value.trim();
+                const moodDream = document.getElementById('mood-dream').value.trim();
+
+                // 至少填写一个字段
+                if (!moodScore && !moodThought && !moodDream) {
+                    showAlert('请至少填写一个字段！', 'error');
+                    return;
+                }
+
+                // 保存随笔数据
+                saveMoodData({
+                    score: moodScore ? parseInt(moodScore) : null,
+                    thought: moodThought,
+                    dream: moodDream
+                });
+
+                // 清空表单
+                document.getElementById('mood-score').value = '';
+                document.getElementById('mood-thought').value = '';
+                document.getElementById('mood-dream').value = '';
+
+                // 隐藏今日随笔编辑模块
+                document.getElementById('mood-section').style.display = 'none';
+
+                // 更新今日随笔卡片
+                loadMoodData();
+
+                // 显示保存成功提示
+                showAlert('随笔保存成功！', 'success');
+            });
         }
 
         // 更改日期
@@ -1599,6 +1793,7 @@
             currentDate.setDate(currentDate.getDate() + days);
             updateDateDisplay();
             loadPlansForDate();
+            loadMoodData();
         }
 
         // 更新日期显示
@@ -1645,7 +1840,16 @@
         // 获取指定日期的计划
         function getPlansByDate(date) {
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
-            return allPlans[date] || [];
+            if (allPlans[date]) {
+                // 检查是否是数组（旧格式）还是对象（新格式）
+                if (Array.isArray(allPlans[date])) {
+                    return allPlans[date];
+                } else {
+                    // 新格式：返回计划数组（排除mood字段）
+                    return allPlans[date].plans || [];
+                }
+            }
+            return [];
         }
 
         // 保存计划
@@ -1653,14 +1857,29 @@
             const dateKey = plan.date;
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
+            // 初始化新格式数据结构
             if (!allPlans[dateKey]) {
-                allPlans[dateKey] = [];
+                allPlans[dateKey] = {
+                    plans: [],
+                    mood: {}
+                };
+            } else if (Array.isArray(allPlans[dateKey])) {
+                // 转换旧格式为新格式
+                allPlans[dateKey] = {
+                    plans: allPlans[dateKey],
+                    mood: {}
+                };
             }
 
-            allPlans[dateKey].push(plan);
+            // 确保计划有date字段
+            if (!plan.date) {
+                plan.date = dateKey;
+            }
+
+            allPlans[dateKey].plans.push(plan);
 
             // 按开始时间排序
-            allPlans[dateKey].sort((a, b) => a.startTime.localeCompare(b.startTime));
+            allPlans[dateKey].plans.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
             localStorage.setItem('studyPlans', JSON.stringify(allPlans));
         }
@@ -1671,11 +1890,29 @@
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
             if (allPlans[dateKey]) {
-                const index = allPlans[dateKey].findIndex(p => p.id === updatedPlan.id);
+                // 正确获取计划数组
+                let plansArray;
+                if (Array.isArray(allPlans[dateKey])) {
+                    // 旧格式
+                    plansArray = allPlans[dateKey];
+                } else {
+                    // 新格式
+                    plansArray = allPlans[dateKey].plans || [];
+                }
+
+                const index = plansArray.findIndex(p => p.id === updatedPlan.id);
                 if (index !== -1) {
-                    allPlans[dateKey][index] = updatedPlan;
+                    plansArray[index] = updatedPlan;
                     // 重新排序
-                    allPlans[dateKey].sort((a, b) => a.startTime.localeCompare(b.startTime));
+                    plansArray.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+                    // 保存回数据结构
+                    if (Array.isArray(allPlans[dateKey])) {
+                        allPlans[dateKey] = plansArray;
+                    } else {
+                        allPlans[dateKey].plans = plansArray;
+                    }
+
                     localStorage.setItem('studyPlans', JSON.stringify(allPlans));
                 }
             }
@@ -1687,7 +1924,17 @@
                 const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
                 if (allPlans[date]) {
-                    allPlans[date] = allPlans[date].filter(p => p.id !== planId);
+                    // 正确获取计划数组
+                    let plansArray;
+                    if (Array.isArray(allPlans[date])) {
+                        // 旧格式
+                        plansArray = allPlans[date];
+                    } else {
+                        // 新格式
+                        plansArray = allPlans[date].plans || [];
+                    }
+
+                    allPlans[date] = plansArray.filter(p => p.id !== planId);
                     localStorage.setItem('studyPlans', JSON.stringify(allPlans));
                     loadPlansForDate();
                     showAlert('计划已删除！', 'success');
@@ -1700,7 +1947,17 @@
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
             if (allPlans[date]) {
-                const plan = allPlans[date].find(p => p.id === planId);
+                // 正确获取计划数组
+                let plansArray;
+                if (Array.isArray(allPlans[date])) {
+                    // 旧格式
+                    plansArray = allPlans[date];
+                } else {
+                    // 新格式
+                    plansArray = allPlans[date].plans || [];
+                }
+                
+                const plan = plansArray.find(p => p.id === planId);
                 if (plan) {
                     plan.completed = !plan.completed;
                     if (reflection && plan.completed) {
@@ -1713,27 +1970,121 @@
 
                     const status = plan.completed ? '已完成' : '未完成';
                     showAlert(`计划标记为${status}！`, 'success');
+                } else {
+                    showAlert('找不到指定的计划！', 'error');
                 }
+            } else {
+                showAlert('找不到指定日期的计划数据！', 'error');
             }
         }
 
-        // 标记计划为未完成（带原因）
+        // 标记计划为未完成（带原因）并延期后续计划
         function togglePlanIncomplete(planId, date, incompleteReason) {
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
             if (allPlans[date]) {
-                const plan = allPlans[date].find(p => p.id === planId);
-                if (plan) {
+                // 正确获取计划数组
+                let plansArray;
+                let isNewFormat = false;
+                if (Array.isArray(allPlans[date])) {
+                    // 旧格式
+                    plansArray = allPlans[date];
+                } else {
+                    // 新格式
+                    plansArray = allPlans[date].plans || [];
+                    isNewFormat = true;
+                }
+                
+                // 查找要标记的计划
+                const planIndex = plansArray.findIndex(p => p.id === planId);
+                if (planIndex !== -1) {
+                    const plan = plansArray[planIndex];
+                    
+                    // 标记当前计划为未完成
                     plan.completed = false;
                     plan.incompleteReason = incompleteReason;
                     // 标记为未完成时清空感想
                     plan.reflection = '';
 
+                    // 获取当前日期的所有计划并按时间排序
+                    const plansForDate = [...plansArray]; // 创建副本
+                    plansForDate.sort((a, b) => a.startTime.localeCompare(b.startTime));
+                    
+                    // 找到当前计划在排序后的位置
+                    const currentIndex = plansForDate.findIndex(p => p.id === planId);
+                    
+                    // 如果不是最后一个计划，则延期当前计划及后面的所有计划
+                    if (currentIndex < plansForDate.length - 1) {
+                        // 计算延期到的日期（明天）
+                        const nextDate = new Date(date);
+                        nextDate.setDate(nextDate.getDate() + 1);
+                        const nextDateKey = nextDate.toISOString().split('T')[0];
+                        
+                        // 确保目标日期有数据结构
+                        if (!allPlans[nextDateKey]) {
+                            allPlans[nextDateKey] = {
+                                plans: [],
+                                mood: {}
+                            };
+                        } else if (Array.isArray(allPlans[nextDateKey])) {
+                            // 转换旧格式
+                            allPlans[nextDateKey] = {
+                                plans: allPlans[nextDateKey],
+                                mood: {}
+                            };
+                        }
+                        
+                        // 移动当前计划及后面的所有计划到第二天
+                        const plansToMove = plansForDate.slice(currentIndex);
+                        
+                        // 从原日期移除所有要移动的计划
+                        const plansToMoveIds = new Set(plansToMove.map(p => p.id));
+                        if (isNewFormat) {
+                            allPlans[date].plans = allPlans[date].plans.filter(p => !plansToMoveIds.has(p.id));
+                        } else {
+                            allPlans[date] = allPlans[date].filter(p => !plansToMoveIds.has(p.id));
+                            // 转换为新格式以便后续保存
+                            allPlans[date] = {
+                                plans: allPlans[date],
+                                mood: {}
+                            };
+                        }
+                        
+                        // 添加到新日期并更新日期字段
+                        plansToMove.forEach(movingPlan => {
+                            movingPlan.date = nextDateKey;
+                            allPlans[nextDateKey].plans.push(movingPlan);
+                        });
+                        
+                        // 对新日期的计划按时间排序
+                        allPlans[nextDateKey].plans.sort((a, b) => a.startTime.localeCompare(b.startTime));
+                        
+                        showAlert(`计划已标记为未完成，并将当前及后续${plansToMove.length}个计划延期到明天！`, 'success');
+                    } else {
+                        showAlert('计划已标记为未完成！', 'success');
+                    }
+
+                    // 确保原日期也是新格式
+                    if (!isNewFormat) {
+                        // 如果原日期还有计划，转换为新格式
+                        if (allPlans[date] && allPlans[date].length > 0) {
+                            allPlans[date] = {
+                                plans: allPlans[date],
+                                mood: {}
+                            };
+                        } else if (allPlans[date] && allPlans[date].length === 0) {
+                            // 如果原日期没有计划了，直接删除或设置为空的新格式
+                            delete allPlans[date];
+                        }
+                    }
+
                     localStorage.setItem('studyPlans', JSON.stringify(allPlans));
                     loadPlansForDate();
-
-                    showAlert('计划已标记为未完成！', 'success');
+                } else {
+                    showAlert('找不到指定的计划！', 'error');
                 }
+            } else {
+                showAlert('找不到指定日期的计划数据！', 'error');
             }
         }
 
@@ -1750,6 +2101,9 @@
             }
 
             plansContainer.innerHTML = '';
+
+            // 获取当前日期的key
+            const currentDateKey = currentDate.toISOString().split('T')[0];
 
             plans.forEach(plan => {
                 const planElement = document.createElement('div');
@@ -1787,20 +2141,20 @@
                     </div>
                     <div class="task-actions">
                         <button class="btn btn-edit task-btn-icon" onclick="editPlan(${plan.id})"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-delete task-btn-icon" onclick="deletePlan(${plan.id}, '${plan.date}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-delete task-btn-icon" onclick="deletePlan(${plan.id}, '${currentDateKey}')"><i class="fas fa-trash"></i></button>
                         ${!plan.completed && !plan.incompleteReason ? `
-                        <button class="btn task-btn-icon" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', false, false)">
+                        <button class="btn task-btn-icon" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${currentDateKey}', false, false)">
                             <i class="fas fa-check"></i>
                         </button>
-                        <button class="btn task-btn-icon" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${plan.date}')">
+                        <button class="btn task-btn-icon" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${currentDateKey}')">
                             <i class="fas fa-times"></i>
                         </button>` : ''}
                         ${plan.completed ? `
-                        <button class="btn task-btn-icon" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${plan.date}')">
+                        <button class="btn task-btn-icon" style="background: #ff416c; color: white;" onclick="markPlanIncomplete(${plan.id}, '${currentDateKey}')">
                             <i class="fas fa-redo"></i>
                         </button>` : ''}
                         ${!plan.completed && plan.incompleteReason ? `
-                        <button class="btn task-btn-icon" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${plan.date}', false, true)">
+                        <button class="btn task-btn-icon" style="background: #2196F3; color: white;" onclick="completePlan(${plan.id}, '${currentDateKey}', false, true)">
                             <i class="fas fa-check"></i>
                         </button>` : ''}
                     </div>
@@ -1946,7 +2300,17 @@
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
             if (allPlans[dateKey]) {
-                const plan = allPlans[dateKey].find(p => p.id === planId);
+                // 正确获取计划数组
+                let plansArray;
+                if (Array.isArray(allPlans[dateKey])) {
+                    // 旧格式
+                    plansArray = allPlans[dateKey];
+                } else {
+                    // 新格式
+                    plansArray = allPlans[dateKey].plans || [];
+                }
+
+                const plan = plansArray.find(p => p.id === planId);
                 if (plan) {
                     // 解析时间
                     const [startHour, startMinute] = plan.startTime.split(':');
@@ -1980,7 +2344,11 @@
                     document.getElementById('add-plan-section').style.display = 'block';
                     document.getElementById('data-manage-section').style.display = 'none';
                     document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showAlert('找不到指定的计划！', 'error');
                 }
+            } else {
+                showAlert('找不到指定日期的计划数据！', 'error');
             }
         }
 
@@ -1993,7 +2361,25 @@
                 return;
             }
 
-            const dataStr = JSON.stringify(allPlans, null, 2);
+            // 确保备份数据格式统一为新格式
+            const backupData = {};
+            Object.keys(allPlans).forEach(date => {
+                if (Array.isArray(allPlans[date])) {
+                    // 旧格式：转换为新格式
+                    backupData[date] = {
+                        plans: allPlans[date],
+                        mood: allPlans[date].mood || {} // 旧格式中随笔数据在数组的mood属性中
+                    };
+                } else if (typeof allPlans[date] === 'object') {
+                    // 新格式：直接使用，但确保字段完整性
+                    backupData[date] = {
+                        plans: allPlans[date].plans || [],
+                        mood: allPlans[date].mood || {}
+                    };
+                }
+            });
+
+            const dataStr = JSON.stringify(backupData, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
             const now = new Date();
@@ -2027,46 +2413,132 @@
                     throw new Error('数据格式不正确，必须是对象格式');
                 }
 
-                // 清理旧版本的优先级字段，确保新字段存在
+                // 清理旧版本的优先级字段，确保新字段存在，并处理新旧数据格式兼容
                 const cleanedData = {};
                 Object.keys(importedData).forEach(date => {
-                    cleanedData[date] = importedData[date].map(plan => {
-                        // 删除优先级字段（如果存在）
-                        const { priority, ...cleanPlan } = plan;
-                        // 确保新字段存在
-                        if (cleanPlan.incompleteReason === undefined) {
-                            cleanPlan.incompleteReason = '';
-                        }
-                        if (cleanPlan.reflection === undefined) {
-                            cleanPlan.reflection = '';
-                        }
-                        return cleanPlan;
-                    });
+                    // 检查日期格式是否正确
+                    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                        console.warn(`跳过无效日期格式: ${date}`);
+                        return;
+                    }
+
+                    if (Array.isArray(importedData[date])) {
+                        // 旧格式：数组格式的数据
+                        cleanedData[date] = {
+                            plans: importedData[date].map(plan => {
+                                // 删除优先级字段（如果存在）
+                                const { priority, ...cleanPlan } = plan;
+                                // 确保新字段存在
+                                if (cleanPlan.incompleteReason === undefined) {
+                                    cleanPlan.incompleteReason = '';
+                                }
+                                if (cleanPlan.reflection === undefined) {
+                                    cleanPlan.reflection = '';
+                                }
+                                // 确保date字段存在
+                                if (cleanPlan.date === undefined) {
+                                    cleanPlan.date = date;
+                                }
+                                return cleanPlan;
+                            }),
+                            mood: importedData[date].mood || {}
+                        };
+                    } else if (typeof importedData[date] === 'object' && importedData[date] !== null) {
+                        // 新格式：对象格式的数据
+                        cleanedData[date] = {
+                            plans: (importedData[date].plans || []).map(plan => {
+                                // 删除优先级字段（如果存在）
+                                const { priority, ...cleanPlan } = plan;
+                                // 确保新字段存在
+                                if (cleanPlan.incompleteReason === undefined) {
+                                    cleanPlan.incompleteReason = '';
+                                }
+                                if (cleanPlan.reflection === undefined) {
+                                    cleanPlan.reflection = '';
+                                }
+                                // 确保date字段存在
+                                if (cleanPlan.date === undefined) {
+                                    cleanPlan.date = date;
+                                }
+                                return cleanPlan;
+                            }),
+                            mood: importedData[date].mood || {}
+                        };
+                    } else {
+                        // 其他情况，可能是只有随笔数据的情况
+                        cleanedData[date] = {
+                            plans: [],
+                            mood: typeof importedData[date] === 'object' ? (importedData[date].mood || {}) : {}
+                        };
+                    }
                 });
 
-                localStorage.setItem('studyPlans', JSON.stringify(cleanedData));
-                showAlert('数据导入成功！', 'success');
+                if (mode === 'replace') {
+                    localStorage.setItem('studyPlans', JSON.stringify(cleanedData));
 
-                // 重新加载当前日期的计划
-                loadPlansForDate();
+                    // 重新加载当前日期的计划和随笔数据
+                    loadPlansForDate();
+                    loadMoodData();
 
-                // 关闭模态框
-                document.getElementById('import-modal').style.display = 'none';
+                    showAlert('数据已成功导入！', 'success');
+                } else if (mode === 'merge') {
+                    const existingData = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
-                // 清空导入文本框
-                document.getElementById('import-data').value = '';
+                    Object.keys(cleanedData).forEach(date => {
+                        if (existingData[date]) {
+                            existingData[date].plans = existingData[date].plans.concat(cleanedData[date].plans);
+                            existingData[date].mood = { ...existingData[date].mood, ...cleanedData[date].mood };
+                        } else {
+                            existingData[date] = cleanedData[date];
+                        }
+                    });
 
-                // 自动隐藏数据管理模块（如果是从数据管理区域触发的）
-                setTimeout(() => {
-                    if (document.getElementById('data-manage-section').style.display === 'block') {
-                        document.getElementById('data-manage-section').style.display = 'none';
-                        showAlert('数据已成功导入，数据管理模块已自动隐藏', 'success');
-                    }
-                }, 1500);
+                    localStorage.setItem('studyPlans', JSON.stringify(existingData));
 
+                    // 重新加载当前日期的计划和随笔数据
+                    loadPlansForDate();
+                    loadMoodData();
+
+                    showAlert('数据已成功合并！', 'success');
+                }
             } catch (error) {
-                showAlert(`导入失败：${error.message}`, 'error');
+                showAlert('数据格式不正确，请检查输入的数据', 'error');
             }
+        }
+
+        // 初始化页面
+        function init() {
+            loadPlans();
+            document.getElementById('import-data').addEventListener('input', () => {
+                document.getElementById('import-data-btn').disabled = false;
+            });
+            document.getElementById('import-data-btn').addEventListener('click', () => {
+                importData(document.getElementById('import-mode').value);
+            });
+            document.getElementById('backup-data-btn').addEventListener('click', backupData);
+            document.getElementById('add-plan-btn').addEventListener('click', () => {
+                document.getElementById('add-plan-section').style.display = 'block';
+                document.getElementById('data-manage-section').style.display = 'none';
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            document.getElementById('data-manage-btn').addEventListener('click', () => {
+                document.getElementById('data-manage-section').style.display = 'block';
+                document.getElementById('add-plan-section').style.display = 'none';
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            document.getElementById('plan-form').addEventListener('submit', handleFormSubmit);
+            document.querySelectorAll('.time-option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('start-hour').value = btn.dataset.startHour;
+                    document.getElementById('start-minute').value = btn.dataset.startMinute;
+                    document.getElementById('end-hour').value = btn.dataset.endHour;
+                    document.getElementById('end-minute').value = btn.dataset.endMinute;
+                });
+            });
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+                document.getElementById('add-plan-section').style.display = 'none';
+                document.getElementById('data-manage-section').style.display = 'none';
+            });
         }
 
         // 处理文件选择
@@ -2088,21 +2560,64 @@
                         throw new Error('数据格式不正确，必须是对象格式');
                     }
 
-                    // 清理旧版本的优先级字段，确保新字段存在
+                    // 清理和转换导入的数据格式（支持新旧格式）
                     const cleanedData = {};
                     Object.keys(importedData).forEach(date => {
-                        cleanedData[date] = importedData[date].map(plan => {
-                            // 删除优先级字段（如果存在）
-                            const { priority, ...cleanPlan } = plan;
-                            // 确保新字段存在
-                            if (cleanPlan.incompleteReason === undefined) {
-                                cleanPlan.incompleteReason = '';
-                            }
-                            if (cleanPlan.reflection === undefined) {
-                                cleanPlan.reflection = '';
-                            }
-                            return cleanPlan;
-                        });
+                        // 检查日期格式是否正确
+                        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                            console.warn(`跳过无效日期格式: ${date}`);
+                            return;
+                        }
+
+                        if (Array.isArray(importedData[date])) {
+                            // 旧格式：数组格式的数据
+                            cleanedData[date] = {
+                                plans: importedData[date].map(plan => {
+                                    // 删除优先级字段（如果存在）
+                                    const { priority, ...cleanPlan } = plan;
+                                    // 确保新字段存在
+                                    if (cleanPlan.incompleteReason === undefined) {
+                                        cleanPlan.incompleteReason = '';
+                                    }
+                                    if (cleanPlan.reflection === undefined) {
+                                        cleanPlan.reflection = '';
+                                    }
+                                    // 确保date字段存在
+                                    if (cleanPlan.date === undefined) {
+                                        cleanPlan.date = date;
+                                    }
+                                    return cleanPlan;
+                                }),
+                                mood: importedData[date].mood || {}
+                            };
+                        } else if (typeof importedData[date] === 'object' && importedData[date] !== null) {
+                            // 新格式：对象格式的数据
+                            cleanedData[date] = {
+                                plans: (importedData[date].plans || []).map(plan => {
+                                    // 删除优先级字段（如果存在）
+                                    const { priority, ...cleanPlan } = plan;
+                                    // 确保新字段存在
+                                    if (cleanPlan.incompleteReason === undefined) {
+                                        cleanPlan.incompleteReason = '';
+                                    }
+                                    if (cleanPlan.reflection === undefined) {
+                                        cleanPlan.reflection = '';
+                                    }
+                                    // 确保date字段存在
+                                    if (cleanPlan.date === undefined) {
+                                        cleanPlan.date = date;
+                                    }
+                                    return cleanPlan;
+                                }),
+                                mood: importedData[date].mood || {}
+                            };
+                        } else {
+                            // 其他情况，可能是只有随笔数据的情况
+                            cleanedData[date] = {
+                                plans: [],
+                                mood: typeof importedData[date] === 'object' ? (importedData[date].mood || {}) : {}
+                            };
+                        }
                     });
 
                     // 显示预览
@@ -2143,6 +2658,9 @@
                 // 重新加载当前日期的计划
                 loadPlansForDate();
 
+                // 重新加载今日随笔数据
+                loadMoodData();
+
                 // 重置文件输入
                 document.getElementById('file-input').value = '';
                 document.getElementById('file-name').textContent = '';
@@ -2150,7 +2668,7 @@
                 tempImportedData = null;
 
                 showAlert('文件数据导入成功！', 'success');
-                
+
                 // 自动隐藏数据管理模块
                 setTimeout(() => {
                     document.getElementById('data-manage-section').style.display = 'none';
@@ -2174,7 +2692,9 @@
             const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
             // 如果没有今天的数据，添加一些示例
-            if (!allPlans[todayKey] || allPlans[todayKey].length === 0) {
+            if (!allPlans[todayKey] || (Array.isArray(allPlans[todayKey]) && allPlans[todayKey].length === 0) || 
+                (typeof allPlans[todayKey] === 'object' && (!allPlans[todayKey].plans || allPlans[todayKey].plans.length === 0))) {
+                
                 const samplePlans = [
                     {
                         id: 1,
@@ -2184,6 +2704,7 @@
                         endTime: "21:00",
                         completed: true,
                         reflection: "今天学习了HTML5的新特性，对语义化标签有了更深的理解。",
+                        incompleteReason: "",
                         date: todayKey
                     },
                     {
@@ -2194,6 +2715,7 @@
                         endTime: "21:30",
                         completed: false,
                         reflection: "",
+                        incompleteReason: "",
                         date: todayKey
                     },
                     {
@@ -2204,6 +2726,7 @@
                         endTime: "22:30",
                         completed: false,
                         reflection: "",
+                        incompleteReason: "",
                         date: todayKey
                     },
                     {
@@ -2214,11 +2737,17 @@
                         endTime: "23:00",
                         completed: false,
                         reflection: "",
+                        incompleteReason: "",
                         date: todayKey
                     }
                 ];
 
-                allPlans[todayKey] = samplePlans;
+                // 使用新格式存储示例数据
+                allPlans[todayKey] = {
+                    plans: samplePlans,
+                    mood: {}
+                };
+                
                 localStorage.setItem('studyPlans', JSON.stringify(allPlans));
                 loadPlansForDate();
             }
@@ -2273,6 +2802,90 @@
                         textElement.innerHTML = `<i class="fas fa-server"></i> 页面来源：服务器 (${Math.round(navEntry.transferSize / 1024)}KB)`;
                     }
                 }
+            }
+        }
+
+        // 保存随笔数据（与计划数据保存在一起）
+        function saveMoodData(moodData) {
+            const dateKey = currentDate.toISOString().split('T')[0];
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+
+            // 创建或更新日期级别的随笔数据
+            if (!allPlans[dateKey]) {
+                allPlans[dateKey] = {
+                    plans: [],
+                    mood: {}
+                };
+            } else if (Array.isArray(allPlans[dateKey])) {
+                // 如果是旧格式（纯数组），转换为新格式
+                allPlans[dateKey] = {
+                    plans: allPlans[dateKey],
+                    mood: {}
+                };
+            }
+
+            // 存储随笔数据
+            allPlans[dateKey].mood = {
+                score: moodData.score,
+                thought: moodData.thought,
+                dream: moodData.dream,
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+        }
+
+        // 加载随笔数据（从计划数据中读取）
+        function loadMoodData() {
+            const dateKey = currentDate.toISOString().split('T')[0];
+            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            const moodDisplay = document.getElementById('mood-display');
+            const moodScoreDisplay = document.getElementById('mood-score-display');
+            const moodThoughtDisplay = document.getElementById('mood-thought-display');
+            const moodDreamDisplay = document.getElementById('mood-dream-display');
+
+            // 确保显示区域可见（始终显示）
+            if (moodDisplay) moodDisplay.style.display = 'block';
+
+            // 检查数据格式 - 兼容数组和对象两种格式
+            let moodData = null;
+            if (allPlans[dateKey]) {
+                if (Array.isArray(allPlans[dateKey])) {
+                    // 旧格式 - 数组，随笔数据存储在数组的mood属性中
+                    moodData = allPlans[dateKey].mood;
+                } else if (typeof allPlans[dateKey] === 'object') {
+                    // 新格式 - 对象，直接获取mood属性
+                    moodData = allPlans[dateKey].mood;
+                }
+            }
+
+            // 显示心情指数
+            if (moodScoreDisplay) {
+                if (moodData && moodData.score !== null && moodData.score !== undefined) {
+                    let scoreClass = 'mood-score-zero';
+                    let scoreText = moodData.score;
+                    if (moodData.score > 0) {
+                        scoreClass = 'mood-score-positive';
+                        scoreText = '+' + moodData.score;
+                    } else if (moodData.score < 0) {
+                        scoreClass = 'mood-score-negative';
+                    }
+                    moodScoreDisplay.textContent = scoreText;
+                    moodScoreDisplay.className = 'mood-value mood-score-value ' + scoreClass;
+                } else {
+                    moodScoreDisplay.textContent = '未记录';
+                    moodScoreDisplay.className = 'mood-value mood-score-value mood-score-zero';
+                }
+            }
+
+            // 显示心迹
+            if (moodThoughtDisplay) {
+                moodThoughtDisplay.textContent = (moodData && moodData.thought) ? moodData.thought : '未记录';
+            }
+
+            // 显示梦境
+            if (moodDreamDisplay) {
+                moodDreamDisplay.textContent = (moodData && moodData.dream) ? moodData.dream : '未记录';
             }
         }
 

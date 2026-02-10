@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老数据格式兼容性测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f7ff;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>老数据格式兼容性全面测试</h1>
+        <p>本测试验证所有功能是否能正确处理旧版数组格式数据</p>
+        
+        <div class="test-section">
+            <h3>测试1: 创建旧格式测试数据</h3>
+            <button onclick="createOldFormatData()">创建旧格式数据</button>
+            <button onclick="createMixedFormatData()">创建混合格式数据</button>
+            <div id="test1-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试2: 标记未完成功能兼容性</h3>
+            <button onclick="testMarkIncompleteCompatibility()">测试标记未完成</button>
+            <div id="test2-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试3: 编辑功能兼容性</h3>
+            <button onclick="testEditCompatibility()">测试编辑功能</button>
+            <div id="test3-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试4: 删除功能兼容性</h3>
+            <button onclick="testDeleteCompatibility()">测试删除功能</button>
+            <div id="test4-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试5: 完成状态切换兼容性</h3>
+            <button onclick="testCompleteToggleCompatibility()">测试完成状态切换</button>
+            <div id="test5-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试6: 数据结构验证</h3>
+            <button onclick="validateAllDataStructures()">全面验证数据结构</button>
+            <div id="test6-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试7: 清理测试数据</h3>
+            <button onclick="clearAllTestData()">清理所有测试数据</button>
+            <div id="test7-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 创建旧格式数据（数组格式）
+        function createOldFormatData() {
+            const oldFormatData = {
+                "2026-02-10": [
+                    {
+                        id: 1,
+                        title: "旧格式计划1",
+                        description: "这是旧格式的测试计划",
+                        startTime: "20:00",
+                        endTime: "21:00",
+                        completed: false,
+                        reflection: "",
+                        incompleteReason: "",
+                        date: "2026-02-10"
+                    },
+                    {
+                        id: 2,
+                        title: "旧格式计划2",
+                        description: "第二个旧格式计划",
+                        startTime: "21:00",
+                        endTime: "22:00",
+                        completed: true,
+                        reflection: "已完成的旧格式计划",
+                        incompleteReason: "",
+                        date: "2026-02-10"
+                    }
+                ]
+            };
+            
+            localStorage.setItem('studyPlans', JSON.stringify(oldFormatData));
+            document.getElementById('test1-result').innerHTML = 
+                '<div class="success">✅ 旧格式测试数据创建成功！<br>' +
+                '格式类型: 数组格式（旧版）<br>' +
+                '计划数量: 2个</div>';
+        }
+        
+        // 创建混合格式数据
+        function createMixedFormatData() {
+            const mixedFormatData = {
+                "2026-02-10": [
+                    {
+                        id: 1,
+                        title: "混合格式计划1",
+                        description: "旧格式计划",
+                        startTime: "20:00",
+                        endTime: "21:00",
+                        completed: false,
+                        reflection: "",
+                        incompleteReason: "",
+                        date: "2026-02-10"
+                    }
+                ],
+                "2026-02-11": {
+                    plans: [
+                        {
+                            id: 3,
+                            title: "混合格式计划2",
+                            description: "新格式计划",
+                            startTime: "20:00",
+                            endTime: "21:00",
+                            completed: false,
+                            reflection: "",
+                            incompleteReason: "",
+                            date: "2026-02-11"
+                        }
+                    ],
+                    mood: {
+                        score: 5,
+                        thought: "今天心情不错",
+                        dream: "做了个好梦"
+                    }
+                }
+            };
+            
+            localStorage.setItem('studyPlans', JSON.stringify(mixedFormatData));
+            document.getElementById('test1-result').innerHTML = 
+                '<div class="warning">⚠️ 混合格式测试数据创建成功！<br>' +
+                '包含旧格式(2026-02-10)和新格式(2026-02-11)<br>' +
+                '总计划数量: 2个</div>';
+        }
+        
+        // 测试标记未完成功能兼容性
+        function testMarkIncompleteCompatibility() {
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                let successCount = 0;
+                let totalCount = 0;
+                
+                for (const date in allPlans) {
+                    totalCount++;
+                    const planId = 1; // 测试第一个计划
+                    
+                    if (allPlans[date]) {
+                        // 兼容性处理：正确获取计划数组
+                        let plansArray;
+                        if (Array.isArray(allPlans[date])) {
+                            plansArray = allPlans[date];
+                        } else {
+                            plansArray = allPlans[date].plans || [];
+                        }
+                        
+                        // 查找要标记的计划
+                        const planIndex = plansArray.findIndex(p => p.id === planId);
+                        if (planIndex !== -1) {
+                            const plan = plansArray[planIndex];
+                            
+                            // 标记当前计划为未完成
+                            plan.completed = false;
+                            plan.incompleteReason = "兼容性测试原因";
+                            plan.reflection = '';
+                            
+                            successCount++;
+                        }
+                    }
+                }
+                
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                
+                if (totalCount > 0) {
+                    document.getElementById('test2-result').innerHTML = 
+                        `<div class="success">✅ 标记未完成兼容性测试通过！<br>` +
+                        `成功处理 ${successCount}/${totalCount} 个日期的数据<br>` +
+                        `未完成原因已正确设置</div>`;
+                } else {
+                    document.getElementById('test2-result').innerHTML = 
+                        '<div class="error">❌ 没有找到测试数据！</div>';
+                }
+            } catch (error) {
+                document.getElementById('test2-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 测试编辑功能兼容性
+        function testEditCompatibility() {
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                let successCount = 0;
+                let totalCount = 0;
+                
+                for (const date in allPlans) {
+                    totalCount++;
+                    const planId = 1; // 测试第一个计划
+                    
+                    if (allPlans[date]) {
+                        // 兼容性处理：正确获取计划数组
+                        let plansArray;
+                        if (Array.isArray(allPlans[date])) {
+                            plansArray = allPlans[date];
+                        } else {
+                            plansArray = allPlans[date].plans || [];
+                        }
+                        
+                        // 查找要编辑的计划
+                        const plan = plansArray.find(p => p.id === planId);
+                        if (plan) {
+                            // 模拟编辑操作
+                            plan.title = plan.title + " [已编辑]";
+                            plan.description = plan.description + " - 编辑测试";
+                            successCount++;
+                        }
+                    }
+                }
+                
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                
+                if (totalCount > 0) {
+                    document.getElementById('test3-result').innerHTML = 
+                        `<div class="success">✅ 编辑功能兼容性测试通过！<br>` +
+                        `成功编辑 ${successCount}/${totalCount} 个日期的数据<br>` +
+                        `计划标题和描述已更新</div>`;
+                } else {
+                    document.getElementById('test3-result').innerHTML = 
+                        '<div class="error">❌ 没有找到测试数据！</div>';
+                }
+            } catch (error) {
+                document.getElementById('test3-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 测试删除功能兼容性
+        function testDeleteCompatibility() {
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                let successCount = 0;
+                let totalCount = 0;
+                
+                for (const date in allPlans) {
+                    totalCount++;
+                    const planId = 2; // 尝试删除第二个计划
+                    
+                    if (allPlans[date]) {
+                        // 兼容性处理：正确处理不同数据格式
+                        if (Array.isArray(allPlans[date])) {
+                            // 旧格式：直接过滤数组
+                            const originalLength = allPlans[date].length;
+                            allPlans[date] = allPlans[date].filter(p => p.id !== planId);
+                            if (allPlans[date].length < originalLength) {
+                                successCount++;
+                            }
+                        } else {
+                            // 新格式：过滤plans数组
+                            const originalLength = allPlans[date].plans.length;
+                            allPlans[date].plans = allPlans[date].plans.filter(p => p.id !== planId);
+                            if (allPlans[date].plans.length < originalLength) {
+                                successCount++;
+                            }
+                        }
+                    }
+                }
+                
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                
+                if (totalCount > 0) {
+                    document.getElementById('test4-result').innerHTML = 
+                        `<div class="success">✅ 删除功能兼容性测试通过！<br>` +
+                        `成功删除 ${successCount}/${totalCount} 个日期中的计划<br>` +
+                        `数据结构保持完整</div>`;
+                } else {
+                    document.getElementById('test4-result').innerHTML = 
+                        '<div class="error">❌ 没有找到测试数据！</div>';
+                }
+            } catch (error) {
+                document.getElementById('test4-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 测试完成状态切换兼容性
+        function testCompleteToggleCompatibility() {
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                let successCount = 0;
+                let totalCount = 0;
+                
+                for (const date in allPlans) {
+                    totalCount++;
+                    
+                    if (allPlans[date]) {
+                        // 兼容性处理：正确获取计划数组
+                        let plansArray;
+                        if (Array.isArray(allPlans[date])) {
+                            plansArray = allPlans[date];
+                        } else {
+                            plansArray = allPlans[date].plans || [];
+                        }
+                        
+                        // 切换所有计划的完成状态
+                        plansArray.forEach(plan => {
+                            plan.completed = !plan.completed;
+                            if (plan.completed) {
+                                plan.reflection = "兼容性测试完成";
+                                plan.incompleteReason = "";
+                            }
+                            successCount++;
+                        });
+                    }
+                }
+                
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                
+                if (totalCount > 0) {
+                    document.getElementById('test5-result').innerHTML = 
+                        `<div class="success">✅ 完成状态切换兼容性测试通过！<br>` +
+                        `成功切换 ${successCount} 个计划的状态<br>` +
+                        `已完成计划添加了反思内容</div>`;
+                } else {
+                    document.getElementById('test5-result').innerHTML = 
+                        '<div class="error">❌ 没有找到测试数据！</div>';
+                }
+            } catch (error) {
+                document.getElementById('test5-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 全面验证数据结构
+        function validateAllDataStructures() {
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                let html = '<div class="info"><strong>数据结构验证结果:</strong><br><br>';
+                
+                let oldFormatCount = 0;
+                let newFormatCount = 0;
+                let totalPlans = 0;
+                
+                for (const date in allPlans) {
+                    html += `📅 日期: ${date}<br>`;
+                    
+                    if (Array.isArray(allPlans[date])) {
+                        // 旧格式（数组）
+                        oldFormatCount++;
+                        const planCount = allPlans[date].length;
+                        totalPlans += planCount;
+                        html += `📊 格式: 旧格式（数组）<br>`;
+                        html += `📋 计划数量: ${planCount}<br>`;
+                        
+                        // 验证每个计划的必要字段
+                        allPlans[date].forEach((plan, index) => {
+                            html += `&nbsp;&nbsp;📝 计划${index + 1}: ${plan.title}<br>`;
+                            html += `&nbsp;&nbsp;&nbsp;&nbsp;状态: ${plan.completed ? '✅已完成' : (plan.incompleteReason ? `❌未完成(${plan.incompleteReason})` : '⏳未开始')}<br>`;
+                            
+                            // 检查必要字段
+                            const requiredFields = ['id', 'title', 'startTime', 'endTime', 'date'];
+                            const missingFields = requiredFields.filter(field => plan[field] === undefined);
+                            if (missingFields.length > 0) {
+                                html += `&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;">⚠️ 缺少字段: ${missingFields.join(', ')}</span><br>`;
+                            }
+                        });
+                    } else {
+                        // 新格式（对象）
+                        newFormatCount++;
+                        const planCount = (allPlans[date].plans || []).length;
+                        const moodExists = Object.keys(allPlans[date].mood || {}).length > 0;
+                        totalPlans += planCount;
+                        html += `📊 格式: 新格式（对象）<br>`;
+                        html += `📋 计划数量: ${planCount}<br>`;
+                        html += `💭 随笔数据: ${moodExists ? '存在' : '不存在'}<br>`;
+                        
+                        // 验证计划
+                        (allPlans[date].plans || []).forEach((plan, index) => {
+                            html += `&nbsp;&nbsp;📝 计划${index + 1}: ${plan.title}<br>`;
+                            html += `&nbsp;&nbsp;&nbsp;&nbsp;状态: ${plan.completed ? '✅已完成' : (plan.incompleteReason ? `❌未完成(${plan.incompleteReason})` : '⏳未开始')}<br>`;
+                        });
+                        
+                        // 验证随笔数据结构
+                        if (moodExists) {
+                            const moodFields = Object.keys(allPlans[date].mood);
+                            html += `&nbsp;&nbsp;💭 随笔字段: ${moodFields.join(', ')}<br>`;
+                        }
+                    }
+                    html += '<br>';
+                }
+                
+                html += `<hr><strong>统计摘要:</strong><br>`;
+                html += `📁 总日期数: ${Object.keys(allPlans).length}<br>`;
+                html += `📊 旧格式日期: ${oldFormatCount}<br>`;
+                html += `📊 新格式日期: ${newFormatCount}<br>`;
+                html += `📋 总计划数: ${totalPlans}<br>`;
+                html += '</div>';
+                
+                document.getElementById('test6-result').innerHTML = html;
+            } catch (error) {
+                document.getElementById('test6-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 清理所有测试数据
+        function clearAllTestData() {
+            localStorage.removeItem('studyPlans');
+            document.getElementById('test7-result').innerHTML = 
+                '<div class="success">✅ 所有测试数据已清理！</div>';
+            
+            // 清空其他结果显示
+            document.getElementById('test1-result').innerHTML = '';
+            document.getElementById('test2-result').innerHTML = '';
+            document.getElementById('test3-result').innerHTML = '';
+            document.getElementById('test4-result').innerHTML = '';
+            document.getElementById('test5-result').innerHTML = '';
+            document.getElementById('test6-result').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

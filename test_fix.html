@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标记未完成功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f7ff;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>标记未完成功能测试</h1>
+        
+        <div class="test-section">
+            <h3>测试1: 创建测试数据</h3>
+            <button onclick="createTestData()">创建测试计划</button>
+            <div id="test1-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试2: 测试标记未完成功能</h3>
+            <button onclick="testMarkIncomplete()">标记第一个计划为未完成</button>
+            <div id="test2-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试3: 验证数据结构</h3>
+            <button onclick="checkDataStructure()">检查数据结构</button>
+            <div id="test3-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试4: 清理测试数据</h3>
+            <button onclick="clearTestData()">清理所有数据</button>
+            <div id="test4-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 测试函数
+        function createTestData() {
+            const testData = {
+                "2026-02-10": {
+                    plans: [
+                        {
+                            id: 1,
+                            title: "测试计划1",
+                            description: "用于测试标记未完成功能",
+                            startTime: "20:00",
+                            endTime: "21:00",
+                            completed: false,
+                            reflection: "",
+                            incompleteReason: "",
+                            date: "2026-02-10"
+                        },
+                        {
+                            id: 2,
+                            title: "测试计划2",
+                            description: "第二个测试计划",
+                            startTime: "21:00",
+                            endTime: "22:00",
+                            completed: false,
+                            reflection: "",
+                            incompleteReason: "",
+                            date: "2026-02-10"
+                        }
+                    ],
+                    mood: {}
+                }
+            };
+            
+            localStorage.setItem('studyPlans', JSON.stringify(testData));
+            document.getElementById('test1-result').innerHTML = '<div class="success">✅ 测试数据创建成功！已添加2个测试计划。</div>';
+        }
+        
+        function testMarkIncomplete() {
+            // 模拟标记未完成的逻辑
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                const date = "2026-02-10";
+                const planId = 1;
+                
+                if (allPlans[date]) {
+                    // 正确获取计划数组
+                    let plansArray;
+                    if (Array.isArray(allPlans[date])) {
+                        plansArray = allPlans[date];
+                    } else {
+                        plansArray = allPlans[date].plans || [];
+                    }
+                    
+                    // 查找要标记的计划
+                    const planIndex = plansArray.findIndex(p => p.id === planId);
+                    if (planIndex !== -1) {
+                        const plan = plansArray[planIndex];
+                        
+                        // 标记当前计划为未完成
+                        plan.completed = false;
+                        plan.incompleteReason = "测试原因：临时有事需要处理";
+                        plan.reflection = '';
+                        
+                        localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                        document.getElementById('test2-result').innerHTML = 
+                            '<div class="success">✅ 标记未完成成功！<br>' +
+                            `计划名称: ${plan.title}<br>` +
+                            `未完成原因: ${plan.incompleteReason}</div>`;
+                    } else {
+                        document.getElementById('test2-result').innerHTML = 
+                            '<div class="error">❌ 找不到指定的计划！</div>';
+                    }
+                } else {
+                    document.getElementById('test2-result').innerHTML = 
+                        '<div class="error">❌ 找不到指定日期的计划数据！</div>';
+                }
+            } catch (error) {
+                document.getElementById('test2-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        function checkDataStructure() {
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                const result = document.getElementById('test3-result');
+                
+                let html = '<div class="success">';
+                html += '<strong>当前数据结构:</strong><br>';
+                
+                for (const date in allPlans) {
+                    html += `日期: ${date}<br>`;
+                    if (Array.isArray(allPlans[date])) {
+                        html += '格式: 旧格式（数组）<br>';
+                        html += `计划数量: ${allPlans[date].length}<br>`;
+                    } else {
+                        html += '格式: 新格式（对象）<br>';
+                        html += `计划数量: ${(allPlans[date].plans || []).length}<br>`;
+                        html += `随笔数据: ${Object.keys(allPlans[date].mood || {}).length > 0 ? '存在' : '不存在'}<br>`;
+                    }
+                    
+                    // 显示具体计划信息
+                    const plans = Array.isArray(allPlans[date]) ? allPlans[date] : (allPlans[date].plans || []);
+                    plans.forEach((plan, index) => {
+                        html += `&nbsp;&nbsp;计划${index + 1}: ${plan.title} - `;
+                        html += plan.completed ? '✅已完成' : (plan.incompleteReason ? `❌未完成(${plan.incompleteReason})` : '⏳未开始');
+                        html += '<br>';
+                    });
+                }
+                
+                html += '</div>';
+                result.innerHTML = html;
+            } catch (error) {
+                document.getElementById('test3-result').innerHTML = 
+                    `<div class="error">❌ 错误: ${error.message}</div>`;
+            }
+        }
+        
+        function clearTestData() {
+            localStorage.removeItem('studyPlans');
+            document.getElementById('test4-result').innerHTML = 
+                '<div class="success">✅ 所有测试数据已清理！</div>';
+            
+            // 清空其他结果显示
+            document.getElementById('test1-result').innerHTML = '';
+            document.getElementById('test2-result').innerHTML = '';
+            document.getElementById('test3-result').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
