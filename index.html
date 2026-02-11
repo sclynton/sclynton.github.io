@@ -1980,9 +1980,15 @@
 
         // 标记计划为未完成（带原因）并延期后续计划
         function togglePlanIncomplete(planId, date, incompleteReason) {
-            const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+            try {
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
 
-            if (allPlans[date]) {
+                if (!allPlans[date]) {
+                    console.error('找不到指定日期的计划数据:', date);
+                    showAlert('找不到指定日期的计划数据！', 'error');
+                    return;
+                }
+
                 // 正确获取计划数组
                 let plansArray;
                 let isNewFormat = false;
@@ -1997,7 +2003,11 @@
                 
                 // 查找要标记的计划
                 const planIndex = plansArray.findIndex(p => p.id === planId);
-                if (planIndex !== -1) {
+                if (planIndex === -1) {
+                    console.error('找不到指定的计划ID:', planId);
+                    showAlert('找不到指定的计划！', 'error');
+                    return;
+                }
                     const plan = plansArray[planIndex];
                     
                     // 标记当前计划为未完成
@@ -2039,6 +2049,7 @@
                         
                         // 从原日期移除所有要移动的计划
                         const plansToMoveIds = new Set(plansToMove.map(p => p.id));
+                        
                         if (isNewFormat) {
                             allPlans[date].plans = allPlans[date].plans.filter(p => !plansToMoveIds.has(p.id));
                         } else {
@@ -2053,38 +2064,54 @@
                         // 添加到新日期并更新日期字段
                         plansToMove.forEach(movingPlan => {
                             movingPlan.date = nextDateKey;
+                            // 确保所有相关字段都更新
+                            movingPlan.originalDate = date; // 保存原始日期供参考
+                            movingPlan.postponedFrom = date; // 标记延期来源
+                            movingPlan.postponedAt = new Date().toISOString(); // 记录延期时间
                             allPlans[nextDateKey].plans.push(movingPlan);
                         });
                         
                         // 对新日期的计划按时间排序
                         allPlans[nextDateKey].plans.sort((a, b) => a.startTime.localeCompare(b.startTime));
                         
+                        // 检查原日期是否还有计划，如果没有则删除或保留空结构
+                        if (allPlans[date].plans.length === 0) {
+                            // 保留空结构以维持数据格式一致性
+                            allPlans[date].plans = [];
+                        }
+                        
                         showAlert(`计划已标记为未完成，并将当前及后续${plansToMove.length}个计划延期到明天！`, 'success');
                     } else {
+                        // 确保数据格式一致
+                        if (!isNewFormat) {
+                            allPlans[date] = {
+                                plans: plansArray,
+                                mood: {}
+                            };
+                        }
                         showAlert('计划已标记为未完成！', 'success');
                     }
 
-                    // 确保原日期也是新格式
-                    if (!isNewFormat) {
-                        // 如果原日期还有计划，转换为新格式
-                        if (allPlans[date] && allPlans[date].length > 0) {
-                            allPlans[date] = {
-                                plans: allPlans[date],
-                                mood: {}
-                            };
-                        } else if (allPlans[date] && allPlans[date].length === 0) {
-                            // 如果原日期没有计划了，直接删除或设置为空的新格式
-                            delete allPlans[date];
-                        }
-                    }
-
                     localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                    
+                    // 重新加载当前日期的显示
                     loadPlansForDate();
-                } else {
-                    showAlert('找不到指定的计划！', 'error');
+                    
+                    // 如果发生了延期，可以询问用户是否要查看明天的计划
+                    if (currentIndex < plansForDate.length - 1) {
+                        setTimeout(() => {
+                            if (confirm('是否要查看明天的计划？')) {
+                                // 切换到明天的日期
+                                currentDate.setDate(currentDate.getDate() + 1);
+                                updateDateDisplay();
+                                loadPlansForDate();
+                            }
+                        }, 500);
+                    }
                 }
-            } else {
-                showAlert('找不到指定日期的计划数据！', 'error');
+            } catch (error) {
+                console.error('标记未完成时发生错误:', error);
+                showAlert('操作失败，请重试！', 'error');
             }
         }
 
@@ -2748,8 +2775,30 @@
                     mood: {}
                 };
                 
-                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
-                loadPlansForDate();
+                    localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+                    
+                    // 重新加载当前日期的显示
+                    loadPlansForDate();
+                    
+                    // 如果发生了延期，可以询问用户是否要查看明天的计划
+                    if (currentIndex < plansForDate.length - 1) {
+                        setTimeout(() => {
+                            if (confirm('是否要查看明天的计划？')) {
+                                // 切换到明天的日期
+                                currentDate.setDate(currentDate.getDate() + 1);
+                                updateDateDisplay();
+                                loadPlansForDate();
+                            }
+                        }, 500);
+                    }
+                }
+            } catch (error) {
+                console.error('标记未完成时发生错误:', error);
+                showAlert('操作失败，请重试！', 'error');
+            }
+        }
+                        }, 500);
+                    }
             }
         }
 
