@@ -473,6 +473,30 @@
                 text-align: center;
             }
 
+            .mood-icon-emoji {
+                font-size: 1.3rem;
+            }
+
+            .mood-icon-emoji.emoji-positive {
+                color: #4CAF50;
+            }
+
+            .mood-icon-emoji.emoji-neutral {
+                color: #FFA000;
+            }
+
+            .mood-icon-emoji.emoji-negative {
+                color: #F44336;
+            }
+
+            .mood-icon-thought {
+                color: #FFC107;
+            }
+
+            .mood-icon-dream {
+                color: #9C27B0;
+            }
+
             .mood-label {
                 font-weight: 600;
                 color: #1976D2;
@@ -1068,17 +1092,17 @@
             <div class="card mood-card">
                 <h2 class="section-title"><i class="fas fa-heart"></i> 今日随笔</h2>
                 <div class="mood-row">
-                    <span class="mood-icon"><i class="fas fa-smile"></i></span>
+                    <span class="mood-icon mood-icon-emoji" id="mood-icon-display"><i class="far fa-meh"></i></span>
                     <span class="mood-label">心情指数</span>
                     <span class="mood-value mood-score-value" id="mood-score-display">未记录</span>
                 </div>
                 <div class="mood-row">
-                    <span class="mood-icon"><i class="fas fa-lightbulb"></i></span>
+                    <span class="mood-icon mood-icon-thought"><i class="fas fa-lightbulb"></i></span>
                     <span class="mood-label">心迹</span>
                     <span class="mood-value" id="mood-thought-display">未记录</span>
                 </div>
                 <div class="mood-row">
-                    <span class="mood-icon"><i class="fas fa-moon"></i></span>
+                    <span class="mood-icon mood-icon-dream"><i class="fas fa-moon"></i></span>
                     <span class="mood-label">梦境</span>
                     <span class="mood-value" id="mood-dream-display">未记录</span>
                 </div>
@@ -1494,6 +1518,39 @@
                 document.getElementById('mood-section').style.display = 'block';
                 document.getElementById('add-plan-section').style.display = 'none';
                 document.getElementById('data-manage-section').style.display = 'none';
+
+                // 回显数据到编辑框
+                const dateKey = currentDate.toISOString().split('T')[0];
+                const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+                if (allPlans[dateKey]) {
+                    let moodData = null;
+                    if (Array.isArray(allPlans[dateKey])) {
+                        moodData = allPlans[dateKey].mood;
+                    } else if (typeof allPlans[dateKey] === 'object') {
+                        moodData = allPlans[dateKey].mood;
+                    }
+
+                    if (moodData) {
+                        // 回显心情指数
+                        if (moodData.score !== null && moodData.score !== undefined) {
+                            document.getElementById('mood-score').value = moodData.score;
+                        }
+                        // 回显心迹
+                        if (moodData.thought) {
+                            document.getElementById('mood-thought').value = moodData.thought;
+                        }
+                        // 回显梦境
+                        if (moodData.dream) {
+                            document.getElementById('mood-dream').value = moodData.dream;
+                        }
+                    } else {
+                        // 清空编辑框
+                        document.getElementById('mood-score').value = '';
+                        document.getElementById('mood-thought').value = '';
+                        document.getElementById('mood-dream').value = '';
+                    }
+                }
+
                 const section = document.getElementById('mood-section');
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
@@ -1978,7 +2035,7 @@
             }
         }
 
-        // 标记计划为未完成（带原因）并延期后续计划
+        // 标记计划为未完成（带原因）
         function togglePlanIncomplete(planId, date, incompleteReason) {
             try {
                 const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
@@ -2000,7 +2057,7 @@
                     plansArray = allPlans[date].plans || [];
                     isNewFormat = true;
                 }
-                
+
                 // 查找要标记的计划
                 const planIndex = plansArray.findIndex(p => p.id === planId);
                 if (planIndex === -1) {
@@ -2008,107 +2065,27 @@
                     showAlert('找不到指定的计划！', 'error');
                     return;
                 }
-                    const plan = plansArray[planIndex];
-                    
-                    // 标记当前计划为未完成
-                    plan.completed = false;
-                    plan.incompleteReason = incompleteReason;
-                    // 标记为未完成时清空感想
-                    plan.reflection = '';
 
-                    // 获取当前日期的所有计划并按时间排序
-                    const plansForDate = [...plansArray]; // 创建副本
-                    plansForDate.sort((a, b) => a.startTime.localeCompare(b.startTime));
-                    
-                    // 找到当前计划在排序后的位置
-                    const currentIndex = plansForDate.findIndex(p => p.id === planId);
-                    
-                    // 如果不是最后一个计划，则延期当前计划及后面的所有计划
-                    if (currentIndex < plansForDate.length - 1) {
-                        // 计算延期到的日期（明天）
-                        const nextDate = new Date(date);
-                        nextDate.setDate(nextDate.getDate() + 1);
-                        const nextDateKey = nextDate.toISOString().split('T')[0];
-                        
-                        // 确保目标日期有数据结构
-                        if (!allPlans[nextDateKey]) {
-                            allPlans[nextDateKey] = {
-                                plans: [],
-                                mood: {}
-                            };
-                        } else if (Array.isArray(allPlans[nextDateKey])) {
-                            // 转换旧格式
-                            allPlans[nextDateKey] = {
-                                plans: allPlans[nextDateKey],
-                                mood: {}
-                            };
-                        }
-                        
-                        // 移动当前计划及后面的所有计划到第二天
-                        const plansToMove = plansForDate.slice(currentIndex);
-                        
-                        // 从原日期移除所有要移动的计划
-                        const plansToMoveIds = new Set(plansToMove.map(p => p.id));
-                        
-                        if (isNewFormat) {
-                            allPlans[date].plans = allPlans[date].plans.filter(p => !plansToMoveIds.has(p.id));
-                        } else {
-                            allPlans[date] = allPlans[date].filter(p => !plansToMoveIds.has(p.id));
-                            // 转换为新格式以便后续保存
-                            allPlans[date] = {
-                                plans: allPlans[date],
-                                mood: {}
-                            };
-                        }
-                        
-                        // 添加到新日期并更新日期字段
-                        plansToMove.forEach(movingPlan => {
-                            movingPlan.date = nextDateKey;
-                            // 确保所有相关字段都更新
-                            movingPlan.originalDate = date; // 保存原始日期供参考
-                            movingPlan.postponedFrom = date; // 标记延期来源
-                            movingPlan.postponedAt = new Date().toISOString(); // 记录延期时间
-                            allPlans[nextDateKey].plans.push(movingPlan);
-                        });
-                        
-                        // 对新日期的计划按时间排序
-                        allPlans[nextDateKey].plans.sort((a, b) => a.startTime.localeCompare(b.startTime));
-                        
-                        // 检查原日期是否还有计划，如果没有则删除或保留空结构
-                        if (allPlans[date].plans.length === 0) {
-                            // 保留空结构以维持数据格式一致性
-                            allPlans[date].plans = [];
-                        }
-                        
-                        showAlert(`计划已标记为未完成，并将当前及后续${plansToMove.length}个计划延期到明天！`, 'success');
-                    } else {
-                        // 确保数据格式一致
-                        if (!isNewFormat) {
-                            allPlans[date] = {
-                                plans: plansArray,
-                                mood: {}
-                            };
-                        }
-                        showAlert('计划已标记为未完成！', 'success');
-                    }
+                // 标记计划为未完成
+                plansArray[planIndex].completed = false;
+                plansArray[planIndex].incompleteReason = incompleteReason;
+                // 标记为未完成时清空感想
+                plansArray[planIndex].reflection = '';
 
-                    localStorage.setItem('studyPlans', JSON.stringify(allPlans));
-                    
-                    // 重新加载当前日期的显示
-                    loadPlansForDate();
-                    
-                    // 如果发生了延期，可以询问用户是否要查看明天的计划
-                    if (currentIndex < plansForDate.length - 1) {
-                        setTimeout(() => {
-                            if (confirm('是否要查看明天的计划？')) {
-                                // 切换到明天的日期
-                                currentDate.setDate(currentDate.getDate() + 1);
-                                updateDateDisplay();
-                                loadPlansForDate();
-                            }
-                        }, 500);
-                    }
+                // 更新数据
+                if (isNewFormat) {
+                    allPlans[date].plans = plansArray;
+                } else {
+                    allPlans[date] = plansArray;
                 }
+
+                // 保存数据
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+
+                // 重新加载当前日期的显示
+                loadPlansForDate();
+
+                showAlert('计划已标记为未完成！', 'success');
             } catch (error) {
                 console.error('标记未完成时发生错误:', error);
                 showAlert('操作失败，请重试！', 'error');
@@ -2774,31 +2751,11 @@
                     plans: samplePlans,
                     mood: {}
                 };
-                
-                    localStorage.setItem('studyPlans', JSON.stringify(allPlans));
-                    
-                    // 重新加载当前日期的显示
-                    loadPlansForDate();
-                    
-                    // 如果发生了延期，可以询问用户是否要查看明天的计划
-                    if (currentIndex < plansForDate.length - 1) {
-                        setTimeout(() => {
-                            if (confirm('是否要查看明天的计划？')) {
-                                // 切换到明天的日期
-                                currentDate.setDate(currentDate.getDate() + 1);
-                                updateDateDisplay();
-                                loadPlansForDate();
-                            }
-                        }, 500);
-                    }
-                }
-            } catch (error) {
-                console.error('标记未完成时发生错误:', error);
-                showAlert('操作失败，请重试！', 'error');
-            }
-        }
-                        }, 500);
-                    }
+
+                localStorage.setItem('studyPlans', JSON.stringify(allPlans));
+
+                // 重新加载当前日期的显示
+                loadPlansForDate();
             }
         }
 
@@ -2892,6 +2849,7 @@
             const moodScoreDisplay = document.getElementById('mood-score-display');
             const moodThoughtDisplay = document.getElementById('mood-thought-display');
             const moodDreamDisplay = document.getElementById('mood-dream-display');
+            const moodIconDisplay = document.getElementById('mood-icon-display');
 
             // 确保显示区域可见（始终显示）
             if (moodDisplay) moodDisplay.style.display = 'block';
@@ -2908,22 +2866,50 @@
                 }
             }
 
-            // 显示心情指数
-            if (moodScoreDisplay) {
+            // 显示心情指数和更新表情图标
+            if (moodScoreDisplay && moodIconDisplay) {
                 if (moodData && moodData.score !== null && moodData.score !== undefined) {
                     let scoreClass = 'mood-score-zero';
+                    let emojiClass = 'emoji-neutral';
+                    let emojiIcon = 'fa-meh';
                     let scoreText = moodData.score;
+
                     if (moodData.score > 0) {
                         scoreClass = 'mood-score-positive';
+                        if (moodData.score >= 7) {
+                            emojiClass = 'emoji-positive';
+                            emojiIcon = 'fa-grin-stars';
+                        } else if (moodData.score >= 4) {
+                            emojiClass = 'emoji-positive';
+                            emojiIcon = 'fa-smile';
+                        } else {
+                            emojiClass = 'emoji-neutral';
+                            emojiIcon = 'fa-smile-beam';
+                        }
                         scoreText = '+' + moodData.score;
                     } else if (moodData.score < 0) {
                         scoreClass = 'mood-score-negative';
+                        if (moodData.score <= -7) {
+                            emojiClass = 'emoji-negative';
+                            emojiIcon = 'fa-dizzy';
+                        } else if (moodData.score <= -4) {
+                            emojiClass = 'emoji-negative';
+                            emojiIcon = 'fa-frown';
+                        } else {
+                            emojiClass = 'emoji-negative';
+                            emojiIcon = 'fa-meh-rolling-eyes';
+                        }
                     }
+
                     moodScoreDisplay.textContent = scoreText;
                     moodScoreDisplay.className = 'mood-value mood-score-value ' + scoreClass;
+                    moodIconDisplay.className = 'mood-icon mood-icon-emoji ' + emojiClass;
+                    moodIconDisplay.innerHTML = '<i class="far ' + emojiIcon + '"></i>';
                 } else {
                     moodScoreDisplay.textContent = '未记录';
                     moodScoreDisplay.className = 'mood-value mood-score-value mood-score-zero';
+                    moodIconDisplay.className = 'mood-icon mood-icon-emoji emoji-neutral';
+                    moodIconDisplay.innerHTML = '<i class="far fa-meh"></i>';
                 }
             }
 
