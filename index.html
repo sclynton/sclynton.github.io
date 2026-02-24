@@ -1495,6 +1495,9 @@
             document.getElementById('show-add-plan-btn').addEventListener('click', () => {
                 document.getElementById('add-plan-section').style.display = 'block';
                 document.getElementById('data-manage-section').style.display = 'none';
+                document.getElementById('mood-section').style.display = 'none';
+                const section = document.getElementById('add-plan-section');
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
 
             document.getElementById('close-add-plan').addEventListener('click', () => {
@@ -1522,33 +1525,32 @@
                 // 回显数据到编辑框
                 const dateKey = currentDate.toISOString().split('T')[0];
                 const allPlans = JSON.parse(localStorage.getItem('studyPlans') || '{}');
+
+                let moodData = null;
                 if (allPlans[dateKey]) {
-                    let moodData = null;
                     if (Array.isArray(allPlans[dateKey])) {
                         moodData = allPlans[dateKey].mood;
                     } else if (typeof allPlans[dateKey] === 'object') {
                         moodData = allPlans[dateKey].mood;
                     }
+                }
 
-                    if (moodData) {
-                        // 回显心情指数
-                        if (moodData.score !== null && moodData.score !== undefined) {
-                            document.getElementById('mood-score').value = moodData.score;
-                        }
-                        // 回显心迹
-                        if (moodData.thought) {
-                            document.getElementById('mood-thought').value = moodData.thought;
-                        }
-                        // 回显梦境
-                        if (moodData.dream) {
-                            document.getElementById('mood-dream').value = moodData.dream;
-                        }
+                if (moodData) {
+                    // 回显心情指数
+                    if (moodData.score !== null && moodData.score !== undefined) {
+                        document.getElementById('mood-score').value = moodData.score;
                     } else {
-                        // 清空编辑框
                         document.getElementById('mood-score').value = '';
-                        document.getElementById('mood-thought').value = '';
-                        document.getElementById('mood-dream').value = '';
                     }
+                    // 回显心迹
+                    document.getElementById('mood-thought').value = moodData.thought || '';
+                    // 回显梦境
+                    document.getElementById('mood-dream').value = moodData.dream || '';
+                } else {
+                    // 清空编辑框
+                    document.getElementById('mood-score').value = '';
+                    document.getElementById('mood-thought').value = '';
+                    document.getElementById('mood-dream').value = '';
                 }
 
                 const section = document.getElementById('mood-section');
